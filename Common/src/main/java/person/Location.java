@@ -6,10 +6,10 @@ import java.io.Serializable;
  * Класс, описывающий местоположение
  */
 public class Location implements Serializable {
-    private Integer x; //Поле не может быть null
-    private Double y; //Поле не может быть null
-    private Long z; //Поле не может быть null
-    private String name; //Длина строки не должна быть больше 374, Поле не может быть null
+    private final Integer x; //Поле не может быть null
+    private final Double y; //Поле не может быть null
+    private final Long z; //Поле не может быть null
+    private final String name; //Длина строки не должна быть больше 374, Поле не может быть null
 
     /**
      * Конструктор, задающий местоположение

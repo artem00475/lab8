@@ -1,7 +1,7 @@
 package exceptions;
 
 /**
- * Исключение выбрасывается, если в полях класса {@link ru.itmo.lab5.person.Location} ошибка
+ * Исключение выбрасывается, если в полях класса {@link person.Location} ошибка
  */
 public class LocationException extends RuntimeException{
     /**

@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class ConsoleCommandManager implements CommandManager {
     ConsoleManager consoleManager = new ConsoleManager();
     private final ScriptManager scriptManager;
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public ConsoleCommandManager(Deque<String> stringDeque,Scanner scanner) {
         scriptManager = new ScriptManager(stringDeque);

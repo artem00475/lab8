@@ -4,7 +4,6 @@ import person.*;
 import exceptions.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -291,7 +290,7 @@ public class ConsoleManager {
             if (!file.isFile()){throw new FileException("Это не файл");}
             if (!file.canRead()){throw new FileException("Нет доступа к файлу");}
             return file;
-            }catch (FileException e){}
+            }catch (FileException ignored){}
         }
     }
 

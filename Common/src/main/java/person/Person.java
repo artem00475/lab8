@@ -13,16 +13,16 @@ import java.util.LinkedList;
  */
 public class Person implements Serializable,Comparable<Person> {
     private static Integer uniqueID=1;
-    private int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
+    private final int id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
-    private Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
+    private final Date creationDate; //Поле не может быть null, Значение этого поля должно генерироваться автоматически
     private Double height; //Поле не может быть null, Значение поля должно быть больше 0
     private ColorE eyeColor; //Поле не может быть null
     private ColorH hairColor; //Поле не может быть null
     private Country nationality; //Поле может быть null
     private Location location; //Поле может быть null
-    private static final LinkedList<Integer> idArray = new LinkedList();
+    private static final LinkedList<Integer> idArray = new LinkedList<>();
 
 
     /**
@@ -203,7 +203,7 @@ public class Person implements Serializable,Comparable<Person> {
      * @return fields список с полями
      */
     public LinkedList<String> getPersonFields(){
-        LinkedList<String> fields= new LinkedList();
+        LinkedList<String> fields= new LinkedList<>();
         fields.add(String.valueOf(id));
         fields.add(name);
         fields.add(String.valueOf(coordinates.getX()));

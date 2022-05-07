@@ -2,8 +2,6 @@ package commands;
 
 import Messages.Request;
 
-import java.io.File;
-import java.util.Deque;
 
 /**
  * Команда, выполняющая скрипт

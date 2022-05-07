@@ -5,7 +5,7 @@ import commands.Command;
 import java.io.Serializable;
 
 public class Request extends Message implements Serializable {
-    private Command command;
+    private final Command command;
     private int id= -1;
     private Object object=null;
     public Request(Command name){

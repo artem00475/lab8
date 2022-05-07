@@ -3,8 +3,8 @@ package Messages;
 import java.io.Serializable;
 
 public class Answer extends Message implements Serializable {
-    private String string;
-    private boolean wasErrors;
+    private final String string;
+    private final boolean wasErrors;
 
     public Answer(String str, boolean wasErrors){
         this.string=str;

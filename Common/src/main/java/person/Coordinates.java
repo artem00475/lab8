@@ -8,8 +8,8 @@ import java.io.Serializable;
  * Класс, описывающий координаты Х и Y
  */
 public class Coordinates implements Serializable {
-    private Integer x; //Максимальное значение поля: 408, Поле не может быть null
-    private Integer y; //Значение поля должно быть больше -876, Поле не может быть null
+    private final Integer x; //Максимальное значение поля: 408, Поле не может быть null
+    private final Integer y; //Значение поля должно быть больше -876, Поле не может быть null
 
     /**
      * Конструктор, задающий координаты Х и Y
