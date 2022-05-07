@@ -1,15 +1,12 @@
 import Messages.Answer;
-import exceptions.ConnectionException;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
-import java.net.SocketTimeoutException;
 import java.nio.channels.DatagramChannel;
 
 public class RecieveManager {
-    private DatagramChannel datagramChannel;
+    private final DatagramChannel datagramChannel;
 
     public RecieveManager(DatagramChannel datagramChannel){
         this.datagramChannel=datagramChannel;
@@ -21,8 +18,7 @@ public class RecieveManager {
         datagramChannel.socket().setSoTimeout(10000);
         datagramChannel.socket().receive(datagramPacket);
         byte[] bytes = datagramPacket.getData();
-        Answer answer = (Answer) deserialize(bytes);
-        return answer;
+        return (Answer) deserialize(bytes);
     }
 
     public Object deserialize(byte[] data) throws IOException, ClassNotFoundException {

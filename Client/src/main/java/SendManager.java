@@ -8,16 +8,16 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
 public class SendManager {
-    private InetSocketAddress inetSocketAddress;
-    private DatagramChannel datagramChannel;
-    private byte[] buff;
+    private final InetSocketAddress inetSocketAddress;
+    private final DatagramChannel datagramChannel;
+
     public SendManager(InetSocketAddress inetSocketAddress, DatagramChannel datagramChannel){
         this.inetSocketAddress = inetSocketAddress;
         this.datagramChannel=datagramChannel;
     }
     public void send(Request request){
         try {
-            buff = serialize(request);
+            byte[] buff = serialize(request);
             datagramChannel.send(ByteBuffer.wrap(buff),inetSocketAddress);
         } catch (IOException e) {
             e.printStackTrace();

@@ -7,7 +7,7 @@ import java.net.SocketTimeoutException;
 import java.util.*;
 
 public class ClientManager {
-    private Command[] commands = {
+    private final Command[] commands = {
             new AddCommand(),
             new InfoCommand(),
             new ShowCommand(),
@@ -23,12 +23,11 @@ public class ClientManager {
             new FilterLessThanEyeColorCommand(),
             new ExcecuteCommand()
     };
-    private String com;
     private boolean ifConsole;
     private ConsoleCommandManager clientCommandManager;
-    private Deque<String> scriptQueue = new LinkedList<>();
-    private SendManager sendManager;
-    private RecieveManager recieveManager;
+    private final Deque<String> scriptQueue = new LinkedList<>();
+    private final SendManager sendManager;
+    private final RecieveManager recieveManager;
 
     public ClientManager( SendManager sendManager, RecieveManager recieveManager) {
         this.sendManager=sendManager;
@@ -41,6 +40,7 @@ public class ClientManager {
         while (true) {
             boolean found = false;
             System.out.print("Введите команду (help - список команд): ");
+            String com;
             try {
                 com = Client.scanner.nextLine().toLowerCase(Locale.ROOT);
             } catch (NoSuchElementException e) {
