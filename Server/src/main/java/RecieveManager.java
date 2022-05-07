@@ -13,7 +13,7 @@ import java.net.InetAddress;
 public class RecieveManager {
     private int clientPort;
     private InetAddress clientAdress;
-    private DatagramSocket datagramSocket;
+    private final DatagramSocket datagramSocket;
     public RecieveManager(DatagramSocket datagramSocket){
         this.datagramSocket=datagramSocket;
     }
@@ -25,8 +25,7 @@ public class RecieveManager {
         datagramSocket.receive(packet);
         clientAdress = packet.getAddress();
         clientPort=packet.getPort();
-        Request request = (Request) deserialize(packet.getData());
-        return request;
+        return (Request) deserialize(packet.getData());
     }
     public int getPort(){
         return clientPort;

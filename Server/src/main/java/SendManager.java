@@ -7,9 +7,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
 public class SendManager {
-    private byte[] buffer;
-    private DatagramSocket datagramSocket;
-    private RecieveManager recieveManager;
+    private final DatagramSocket datagramSocket;
+    private final RecieveManager recieveManager;
 
     public SendManager (DatagramSocket datagramSocket,RecieveManager recieveManager){
         this.datagramSocket = datagramSocket;
@@ -18,10 +17,10 @@ public class SendManager {
 
     public void sendAnswer(Answer answer) {
         try {
-            buffer = serialize(answer);
+            byte[] buffer = serialize(answer);
             DatagramPacket output = new DatagramPacket(buffer, buffer.length, recieveManager.getAdress(), recieveManager.getPort());
             datagramSocket.send(output);
-        }catch (IOException e){}
+        }catch (IOException ignored){}
     }
 
     public byte[] serialize(Object obj) throws IOException {

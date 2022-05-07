@@ -3,9 +3,8 @@ import commands.*;
 import java.util.*;
 
 public class ServerConsoleCommandManager {
-    private Scanner scanner;
-    private ConsoleCommandManager consoleCommandManager;
-    private Command[] commands = {
+    private final ConsoleCommandManager consoleCommandManager;
+    private final Command[] commands = {
             new AddCommand(),
             new InfoCommand(),
             new ShowCommand(),
@@ -21,12 +20,11 @@ public class ServerConsoleCommandManager {
             new FilterLessThanEyeColorCommand(),
             new ExcecuteCommand()
     };
-    private Deque<String> scriptQueue = new LinkedList<>();
+    private final Deque<String> scriptQueue = new LinkedList<>();
     private boolean ifConsole;
-    private ServerCommandManager serverCommandManager;
+    private final ServerCommandManager serverCommandManager;
 
     public ServerConsoleCommandManager(Scanner scanner,ServerCommandManager serverCommandManager) {
-        this.scanner = scanner;
         consoleCommandManager = new ConsoleCommandManager(scriptQueue, scanner);
         this.serverCommandManager=serverCommandManager;
     }

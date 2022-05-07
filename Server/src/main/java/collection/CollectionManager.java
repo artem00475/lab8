@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
  * Класс, работающий с коллекцией
  */
 public class CollectionManager {
-    private String scanPath = "ish";
     private final Queue<Person> collection;
     private final String initDate;
     private final FileManager fileManager;
@@ -30,9 +29,10 @@ public class CollectionManager {
         collection = new PriorityQueue<>();
         initDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"));
         this.fileManager= new FileManager();
+        String scanPath = "ish";
         File file = new File(scanPath);
         Scanner scanner = new Scanner(file);
-        parseFileToCollection(scanner,scanPath);
+        parseFileToCollection(scanner, scanPath);
     }
 
     /**

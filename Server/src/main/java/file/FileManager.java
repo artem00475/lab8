@@ -20,7 +20,7 @@ import java.util.Scanner;
  * Класс, работающий с файлом коллекции
  */
 public class FileManager {
-    private String[] tags = new String[]{"id", "name", "coordinatesX", "coordinatesY","date", "height", "eyeColor", "hairColor", "nationality", "locationX", "locationY", "locationZ", "locationName" };
+    private final String[] tags = new String[]{"id", "name", "coordinatesX", "coordinatesY","date", "height", "eyeColor", "hairColor", "nationality", "locationX", "locationY", "locationZ", "locationName" };
     private String scanPath;
 
     /**
@@ -182,7 +182,6 @@ public class FileManager {
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(scanPath))) {
             bufferedWriter.write(String.valueOf(str));
-            bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -11,13 +11,13 @@ import java.util.logging.*;
 
 
 public class ServerManager {
-    private SendManager sendManager;
-    private RecieveManager recieveManager;
-    private CollectionManager collectionManager;
-    private ServerCommandManager serverCommandManager;
+    private final SendManager sendManager;
+    private final RecieveManager recieveManager;
+    private final CollectionManager collectionManager;
+    private final ServerCommandManager serverCommandManager;
     private ServerConsoleCommandManager serverConsoleCommandManager;
     private Scanner scanner;
-    private Logger LOG;
+    private final Logger LOG;
 
     public ServerManager(SendManager sendManager,RecieveManager recieveManager, CollectionManager collectionManager) throws IOException {
         this.collectionManager=collectionManager;
@@ -66,7 +66,7 @@ public class ServerManager {
                                 }
                             }
                         }
-                    } catch (NullPointerException | IOException e) {
+                    } catch (NullPointerException | IOException ignored) {
                     }
                 } catch (IOException | ClassNotFoundException e) {
                     sendManager.sendAnswer(new Answer(null, true));

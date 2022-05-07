@@ -8,7 +8,7 @@ import person.Location;
 import person.Person;
 
 public class ServerCommandManager implements CommandManager {
-    private boolean wasErrors=false;
+    private final boolean wasErrors=false;
     private final CollectionManager collectionManager;
 
     public ServerCommandManager(CollectionManager collectionManager){
