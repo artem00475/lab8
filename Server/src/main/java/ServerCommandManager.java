@@ -108,14 +108,14 @@ public class ServerCommandManager implements CommandManager {
     }
 
     public String addCommand(Person person){
-        collectionManager.addElement(createPerson(person));
-        return "Элемент успешно добавлен";
+        if (collectionManager.addElement(createPerson(person))) {
+            return "Элемент успешно добавлен";
+        }else return "Объект не добавлен";
    }
 
    public String addIfMaxCommand(Person person){
        if (collectionManager.ifMore(person)) {
-           collectionManager.addElement(createPerson(person));
-           return "Элемент успешно добавлен";
+           return addCommand(person);
        } else {
            return "Значение элемента не превышает наибольшего элемента коллекции";
        }
@@ -132,7 +132,7 @@ public class ServerCommandManager implements CommandManager {
    public String removeByIdCommand(int id){
        if (collectionManager.removeElementByID(id)) {
            return "Элемент успешно удалён.";
-       }else {return "Элемента с таким id нет в коллекции";}
+       }else {return "Элемента с таким id нет в коллекции или ошибка доступа к БД";}
    }
 
    public String updateCommand(int id, Person person){

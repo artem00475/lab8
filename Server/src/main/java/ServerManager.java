@@ -1,3 +1,4 @@
+import DataBase.DBManager;
 import Messages.Answer;
 import Messages.Request;
 import collection.CollectionManager;
@@ -21,10 +22,11 @@ public class ServerManager {
     private final Logger LOG;
     private DBManager dbManager;
 
-    public ServerManager(SendManager sendManager,RecieveManager recieveManager, CollectionManager collectionManager) throws IOException {
-        this.collectionManager=collectionManager;
+    public ServerManager(SendManager sendManager,RecieveManager recieveManager) throws IOException {
         this.recieveManager=recieveManager;
         this.sendManager=sendManager;
+        dbManager = new DBManager();
+        this.collectionManager=new CollectionManager(dbManager);
         serverCommandManager = new ServerCommandManager(collectionManager);
         scanner = new Scanner(System.in);
         serverConsoleCommandManager = new ServerConsoleCommandManager(scanner,serverCommandManager);
@@ -32,7 +34,7 @@ public class ServerManager {
         FileHandler fileHandler = new FileHandler("Application_log",true);
         fileHandler.setFormatter(new SimpleFormatter());
         LOG.addHandler(fileHandler);
-        dbManager = new DBManager();
+
     }
 
     public void run() {
@@ -47,47 +49,51 @@ public class ServerManager {
             LOG.log(Level.INFO,"Завершение работы сервера");
             work=false;
         }
-        while (work) {
-            try {
-                Request request;
+        short initialisator =  dbManager.initializeCollection();
+        if (initialisator == 1) {
+            LOG.info("Элементы из базы данных добавлены в коллекцию");
+        }else if (initialisator==0) {
+            LOG.info("В базе данных нет элементов");
+        } else LOG.info("Ошибка при чтении БД");
+        try {
+            while (work) {
                 try {
-                    request = recieveManager.recieveRequest();
-                    LOG.log(Level.INFO,"Получен запрос от клиента на выполнение команды "+request.getCommand().getName());
-                    Answer answer = serverCommandManager.execute(request, false);
-                    sendManager.sendAnswer(answer);
-                    LOG.log(Level.INFO,"Команда "+request.getCommand().getName()+" выполнена и ответ отправлен клиенту");
-                } catch (SocketTimeoutException exception) {
+                    Request request;
                     try {
-                        if (System.in.available() > 0) {
-                            String com = scanner.nextLine().toLowerCase(Locale.ROOT);
-                            if (com.equals("exit")) {
-                                collectionManager.saveCollection();
-                                LOG.log(Level.INFO,"Коллекция сохранена в файл");
-                                LOG.log(Level.INFO,"Завершение работы сервера");
-                                break;
-                            } else if (com.equals("save")) {
-                                collectionManager.saveCollection();
-                                LOG.log(Level.INFO,"Коллекция сохранена в файл");
+                        request = recieveManager.recieveRequest();
+                        LOG.log(Level.INFO, "Получен запрос от клиента на выполнение команды " + request.getCommand().getName());
+                        Answer answer = serverCommandManager.execute(request, false);
+                        sendManager.sendAnswer(answer);
+                        LOG.log(Level.INFO, "Команда " + request.getCommand().getName() + " выполнена и ответ отправлен клиенту");
+                    } catch (SocketTimeoutException exception) {
+                        try {
+                            if (System.in.available() > 0) {
+                                String com = scanner.nextLine().toLowerCase(Locale.ROOT);
+                                if (com.equals("exit")) {
+                                    LOG.log(Level.INFO, "Завершение работы сервера");
+                                    break;
                             } else {
-                                try {
-                                    if (serverConsoleCommandManager.run(com)) LOG.log(Level.INFO, "Выполнена команда "+com+" из консоли");
-                                }catch (NoSuchElementException e){
-                                    System.out.println("Вы вышли из ввода команды");
-                                    scanner = new Scanner(System.in);
-                                    serverConsoleCommandManager = new ServerConsoleCommandManager(scanner,serverCommandManager);
+                                    try {
+                                        if (serverConsoleCommandManager.run(com))
+                                            LOG.log(Level.INFO, "Выполнена команда " + com + " из консоли");
+                                    } catch (NoSuchElementException e) {
+                                        System.out.println("Вы вышли из ввода команды");
+                                        scanner = new Scanner(System.in);
+                                        serverConsoleCommandManager = new ServerConsoleCommandManager(scanner, serverCommandManager);
+                                    }catch (Exception e){}
                                 }
                             }
+                        } catch (NullPointerException | IOException ignored) {
                         }
-                    } catch (NullPointerException | IOException ignored) {
+                    } catch (IOException | ClassNotFoundException e) {
+                        sendManager.sendAnswer(new Answer(null, true));
+                        LOG.log(Level.WARNING, e.getMessage());
                     }
-                } catch (IOException | ClassNotFoundException e) {
-                    sendManager.sendAnswer(new Answer(null, true));
-                    LOG.log(Level.WARNING,e.getMessage());
+                } catch (NoSuchElementException e) {
+                    LOG.log(Level.INFO, "Завершение работы сервера");
+                    break;
                 }
-            }catch (NoSuchElementException e){
-                collectionManager.saveCollection();
-                LOG.log(Level.INFO,"Завершение работы сервера");
-                break;}
-        }
+            }
+        }catch (ConnectionException e){}
     }
 }

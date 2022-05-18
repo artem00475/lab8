@@ -42,19 +42,19 @@ public class Person implements Serializable,Comparable<Person> {
      * @param locationName название местоположения
      */
     public Person(int id, String name, Integer coordinatesX, Integer coordinatesY, Date date, Double height, ColorE eyeColor, ColorH hairColor, Country nationality, Integer locationX, Double locationY, Long locationZ, String locationName ){
-        if (idArray.isEmpty()){
-           idArray.add(id);
-        }else {
-            for (Integer integer : idArray) {
-                if (integer.equals(id)) {
-                    throw new IdException("Человек с таким id уже есть в файле.");
-                }
-            }
-            idArray.add(id);
-        }
-        if (id<=0){throw new IdException("Id должен быть больше 0");}
+//        if (idArray.isEmpty()){
+//           idArray.add(id);
+//        }else {
+//            for (Integer integer : idArray) {
+//                if (integer.equals(id)) {
+//                    throw new IdException("Человек с таким id уже есть в файле.");
+//                }
+//            }
+//            idArray.add(id);
+//        }
+//        if (id<=0){throw new IdException("Id должен быть больше 0");}
         this.id  = id;
-        if (id >= uniqueID){uniqueID=id+1;}
+//        if (id >= uniqueID){uniqueID=id+1;}
         this.name=name;
         this.coordinates=new Coordinates(coordinatesX,coordinatesY);
         this.creationDate= date;
@@ -81,8 +81,8 @@ public class Person implements Serializable,Comparable<Person> {
      */
     public Person(String name,Integer coordinatesX,Integer coordinatesY, Double height, ColorE eyeColor, ColorH hairColor, Country nationality, Integer locationX, Double locationY, Long locationZ, String locationName){
         this.id  = uniqueID;
-        idArray.add(id);
-        uniqueID++;
+//        idArray.add(id);
+//        uniqueID++;
         this.name=name;
         this.coordinates=new Coordinates(coordinatesX,coordinatesY);
         this.creationDate=new Date(System.currentTimeMillis());

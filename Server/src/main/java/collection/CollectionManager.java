@@ -1,16 +1,13 @@
 package collection;
 
 
-import file.FileManager;
+import DataBase.DBManager;
 import person.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 /**
@@ -19,20 +16,17 @@ import java.util.stream.Collectors;
 public class CollectionManager {
     private final Queue<Person> collection;
     private final String initDate;
-    private final FileManager fileManager;
+    private DBManager dbManager;
 
     /**
      * Конструктор, задающий параметры объекта
      * Создается коллекция, сохраняется дата создания
      */
-    public CollectionManager() throws FileNotFoundException {
+    public CollectionManager(DBManager dbManager) {
         collection = new PriorityQueue<>();
         initDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"));
-        this.fileManager= new FileManager();
-        String scanPath = "ish";
-        File file = new File(scanPath);
-        Scanner scanner = new Scanner(file);
-        parseFileToCollection(scanner, scanPath);
+        this.dbManager=dbManager;
+        dbManager.setCollection(collection);
     }
 
     /**
@@ -61,21 +55,15 @@ public class CollectionManager {
     }
 
     /**
-     * Заполнение коллекции из файла
-     * @param scanner консоль
-     * @param string путь к файле
-     * @throws FileNotFoundException если файл, не найден
-     */
-    public void parseFileToCollection(Scanner scanner, String string) {
-        fileManager.parseFile(collection,scanner,string);
-    }
-
-    /**
      * Добавляет объект класса {@link Person} в коллекцию
      * @param person объект класса {@link Person}
      */
-    public void addElement(Person person){
-        collection.add(person);
+    public boolean addElement(Person person) {
+        Person person1 = dbManager.addPerson(person);
+        if (!(person1==null)) {
+            collection.add(person1);
+            return true;
+        }else return false;
     }
 
     /**
@@ -84,19 +72,19 @@ public class CollectionManager {
      * @param p объект класса {@link Person}
      */
     public boolean updateElement(int id, Person p){
+        if (dbManager.updatePerson(id,p)){
         Person person1 = collection.stream().filter(person -> person.getID()==id).findFirst().orElse(null);
-        try {
-            collection.remove(person1);
-            person1.setName(p.getName());
-            person1.setCoordinates(p.getCoordinates());
-            person1.setHeight(p.getHeight());
-            person1.setEyeColor(p.getEyeColor());
-            person1.setHairColor(p.getHairColor());
-            person1.setNationality(p.getNationality());
-            person1.setLocation(p.getLocation());
-            collection.add(person1);
-            return true;
-        }catch (NullPointerException e){return false;}
+        collection.remove(person1);
+        person1.setName(p.getName());
+        person1.setCoordinates(p.getCoordinates());
+        person1.setHeight(p.getHeight());
+        person1.setEyeColor(p.getEyeColor());
+        person1.setHairColor(p.getHairColor());
+        person1.setNationality(p.getNationality());
+        person1.setLocation(p.getLocation());
+        collection.add(person1);
+        return true;
+        }else {return false;}
     }
 
     /**
@@ -104,7 +92,9 @@ public class CollectionManager {
      * @param id id элемента
      */
     public boolean removeElementByID(int id){
-        return collection.remove(collection.stream().filter(person -> person.getID()==id).findFirst().orElse(null));
+        if (dbManager.deletePerson(id)) {
+            return collection.remove(collection.stream().filter(person -> person.getID() == id).findFirst().orElse(null));
+        }else return false;
     }
 
     /**
@@ -117,21 +107,12 @@ public class CollectionManager {
     }
 
     /**
-     * Сохраняет коллекцию в файл
-     */
-    public void saveCollection() {
-        fileManager.saveToFile(collection);
-        //System.out.println("Коллекция сохранена");
-    }
-
-    /**
      * Удаляет первый элемент из очереди
      * @return объект класса {@link Person}
      */
     public Person removeFirstElement(){
-        Person person = collection.remove();
-        Person.removeFromIdArray(person.getID());
-        return person;
+        dbManager.deletePerson(collection.peek().getID());
+        return collection.remove();
     }
 
     /**
@@ -150,7 +131,9 @@ public class CollectionManager {
      * @return {@code true} если нужные элементы есть, иначе {@code false}
      */
     public boolean removeGreater(Person person){
-        return collection.removeAll(collection.stream().filter(person1 -> person1.getHeight()>person.getHeight()).collect(Collectors.toCollection(PriorityQueue<Person>::new)));
+        PriorityQueue<Person> people = collection.stream().filter(person1 -> person1.getHeight()>person.getHeight()).collect(Collectors.toCollection(PriorityQueue<Person>::new));
+        people.stream().forEach(person1 -> dbManager.deletePerson(person1.getID()));
+        return collection.removeAll(people);
     }
 
     /**

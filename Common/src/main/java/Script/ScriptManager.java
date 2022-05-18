@@ -244,8 +244,6 @@ public class ScriptManager {
             id = Integer.parseInt(scanned);
         } catch (NumberFormatException e) {
             throw new IdException("Введено нечисловое значение");
-        } if (!Person.getIdArray().contains(id)){
-            throw new IdException("Элемента с таким id нет в коллекции");
         } return id;
     }
 
