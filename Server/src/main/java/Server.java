@@ -1,7 +1,7 @@
 import collection.CollectionManager;
 import java.io.IOException;
 import java.net.DatagramSocket;
-
+import java.sql.*;
 
 
 public class Server {
@@ -13,7 +13,5 @@ public class Server {
         ServerManager serverManager = new ServerManager(sendManager,recieveManager,collectionManager);
         serverManager.run();
         server.close();
-
     }
-
 }

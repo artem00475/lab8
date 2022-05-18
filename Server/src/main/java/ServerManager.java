@@ -1,6 +1,7 @@
 import Messages.Answer;
 import Messages.Request;
 import collection.CollectionManager;
+import exceptions.ConnectionException;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -18,6 +19,7 @@ public class ServerManager {
     private ServerConsoleCommandManager serverConsoleCommandManager;
     private Scanner scanner;
     private final Logger LOG;
+    private DBManager dbManager;
 
     public ServerManager(SendManager sendManager,RecieveManager recieveManager, CollectionManager collectionManager) throws IOException {
         this.collectionManager=collectionManager;
@@ -30,12 +32,22 @@ public class ServerManager {
         FileHandler fileHandler = new FileHandler("Application_log",true);
         fileHandler.setFormatter(new SimpleFormatter());
         LOG.addHandler(fileHandler);
-
+        dbManager = new DBManager();
     }
 
     public void run() {
+        boolean work;
         LOG.log(Level.INFO,"Сервер запущен");
-        while (true) {
+        if (dbManager.connect()) {
+            LOG.info("База данных подключена");
+            work =true;
+        } else {
+            LOG.info("Подключение с базой данных не установлено");
+            System.out.println("Попробуйте перезапустить сервер");
+            LOG.log(Level.INFO,"Завершение работы сервера");
+            work=false;
+        }
+        while (work) {
             try {
                 Request request;
                 try {
