@@ -23,9 +23,11 @@ public class ServerConsoleCommandManager {
     private final Deque<String> scriptQueue = new LinkedList<>();
     private boolean ifConsole;
     private final ServerCommandManager serverCommandManager;
+    private final String login = "Server";
+    private final int password = 1;
 
     public ServerConsoleCommandManager(Scanner scanner,ServerCommandManager serverCommandManager) {
-        consoleCommandManager = new ConsoleCommandManager(scriptQueue, scanner);
+        consoleCommandManager = new ConsoleCommandManager(scriptQueue, scanner,login,password);
         this.serverCommandManager=serverCommandManager;
     }
 

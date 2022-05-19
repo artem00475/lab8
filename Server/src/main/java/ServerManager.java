@@ -61,10 +61,33 @@ public class ServerManager {
                     Request request;
                     try {
                         request = recieveManager.recieveRequest();
-                        LOG.log(Level.INFO, "Получен запрос от клиента на выполнение команды " + request.getCommand().getName());
-                        Answer answer = serverCommandManager.execute(request, false);
-                        sendManager.sendAnswer(answer);
-                        LOG.log(Level.INFO, "Команда " + request.getCommand().getName() + " выполнена и ответ отправлен клиенту");
+                        if (request.getCommand() == null) {
+                            LOG.info("Получен запрос на авторизацию от клиента");
+                            short checkedUser = dbManager.checkUser(request.getLogin(), request.getPassword());
+                            if (checkedUser == 1) {
+                                LOG.info("Клиент авторизован");
+                                sendManager.sendAnswer(new Answer("Авторизация выполнена", false));
+                            } else if (checkedUser == 0) {
+                                LOG.info("Клиент зарегистрирован");
+                                sendManager.sendAnswer(new Answer("Регистрация выполнена", false));
+                            } else if (checkedUser == -1) {
+                                LOG.info("Клиент не авторизован");
+                                sendManager.sendAnswer(new Answer("Авторизация не выполнена", true));
+                            }
+                        } else if (!(request.getCommand() == null)) {
+                            if (dbManager.checkUser(request.getLogin(), request.getPassword()) == 1) {
+                                LOG.log(Level.INFO, "Получен запрос от клиента на выполнение команды " + request.getCommand().getName() + " от авторизованного клиента");
+                                Answer answer = serverCommandManager.execute(request, true);
+                                sendManager.sendAnswer(answer);
+                                LOG.log(Level.INFO, "Команда " + request.getCommand().getName() + " выполнена и ответ отправлен клиенту");
+                            } else {
+                                LOG.log(Level.INFO, "Получен запрос от клиента на выполнение команды " + request.getCommand().getName() + " от неавторизованного клиента");
+                                sendManager.sendAnswer(new Answer("Команда не выполнена, клиент не авторизован", true));
+                                LOG.info("Команда не выполнена, клиент не авторизован");
+                            }
+
+                        }
+                    }catch (ConnectionException e){
                     } catch (SocketTimeoutException exception) {
                         try {
                             if (System.in.available() > 0) {

@@ -15,6 +15,8 @@ import java.util.Queue;
 public class DBManager {
     private Connection connection=null;
     private Queue<Person> collection;
+    private String login;
+    private int password;
 
     public boolean connect() {
         try {
@@ -136,6 +138,58 @@ public class DBManager {
             preparedStatement.setLong(10,person.getLocation().getZ());
             preparedStatement.setString(11,person.getLocation().getName());
             preparedStatement.setInt(12,id);
+            if (preparedStatement.executeUpdate()>0){
+                return true;
+            }else {return false;}
+        } catch (SQLException e) {
+            throw new ConnectionException("Ошибка доступа к БД");
+        }
+    }
+
+    public boolean checkLogin(String login) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM USERS WHERE userNAme = ?;");
+            preparedStatement.setString(1,login);
+            preparedStatement.execute();
+            return (preparedStatement.getResultSet().next());
+        } catch (SQLException e) {
+            throw new ConnectionException("Ошибка доступа к БД");
+        }
+    }
+
+    public boolean checkPass(String login, int password) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM USERS WHERE userNAme = ? and password = ?;");
+            preparedStatement.setString(1,login);
+            preparedStatement.setInt(2,password);
+            preparedStatement.execute();
+            return (preparedStatement.getResultSet().next());
+        } catch (SQLException e) {
+            throw new ConnectionException("Ошибка доступа к БД");
+        }
+    }
+
+    public short checkUser(String login, int password) {
+        if (checkLogin(login)) {
+            if (checkPass(login,password)) {
+                this.login = login;
+                this.password=password;
+                return 1;
+            } else return -1;
+        }  else {
+            if (addUser(login,password)) {
+                this.login = login;
+                this.password = password;
+                return 0;
+            }else return -2;
+        }
+    }
+
+    public boolean addUser(String login,int password) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO USERS VALUES(?,?);");
+            preparedStatement.setString(1,login);
+            preparedStatement.setInt(2,password);
             if (preparedStatement.executeUpdate()>0){
                 return true;
             }else {return false;}

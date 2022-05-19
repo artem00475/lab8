@@ -28,14 +28,21 @@ public class ClientManager {
     private final Deque<String> scriptQueue = new LinkedList<>();
     private final SendManager sendManager;
     private final RecieveManager recieveManager;
+    private String login;
+    private int password;
 
     public ClientManager( SendManager sendManager, RecieveManager recieveManager) {
         this.sendManager=sendManager;
         this.recieveManager=recieveManager;
-        clientCommandManager = new ConsoleCommandManager(scriptQueue,Client.scanner);
     }
 
     public void consoleMode() {
+        System.out.print("Введите логин: ");
+        login= Client.scanner.nextLine();
+        System.out.print("Введите пароль: ");
+        password=Integer.parseInt(Client.scanner.nextLine());
+        sendAndRecieve(new Request(login,password));
+        clientCommandManager = new ConsoleCommandManager(scriptQueue,Client.scanner,login,password);
         ifConsole = true;
         while (true) {
             boolean found = false;
@@ -64,7 +71,7 @@ public class ClientManager {
                     }
                 }catch (NoSuchElementException e) {
                     Client.scanner = new Scanner(System.in);
-                    clientCommandManager = new ConsoleCommandManager(scriptQueue,Client.scanner);
+                    clientCommandManager = new ConsoleCommandManager(scriptQueue,Client.scanner,login,password);
                     System.out.println("Вы вышли из ввода команды команды");
                 }catch (ConnectionException e){
                     System.out.println("Повторите попытку позже");
