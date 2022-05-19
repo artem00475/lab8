@@ -29,7 +29,7 @@ public class ClientManager {
     private final SendManager sendManager;
     private final RecieveManager recieveManager;
     private String login;
-    private int password;
+    private String password;
 
     public ClientManager( SendManager sendManager, RecieveManager recieveManager) {
         this.sendManager=sendManager;
@@ -37,48 +37,62 @@ public class ClientManager {
     }
 
     public void consoleMode() {
-        System.out.print("Введите логин: ");
-        login= Client.scanner.nextLine();
-        System.out.print("Введите пароль: ");
-        password=Integer.parseInt(Client.scanner.nextLine());
-        sendAndRecieve(new Request(login,password));
-        clientCommandManager = new ConsoleCommandManager(scriptQueue,Client.scanner,login,password);
-        ifConsole = true;
-        while (true) {
-            boolean found = false;
-            System.out.print("Введите команду (help - список команд): ");
-            String com;
-            try {
-                com = Client.scanner.nextLine().toLowerCase(Locale.ROOT);
-            } catch (NoSuchElementException e) {
-                System.out.println("\nВы вышли из программы");
-                break;
-            } if (com.equals("exit")) {
-                break;
-            } else {
-                try {
-                    for (Command command : commands) {
-                        if (com.equals(command.getName())) {
-                            found = true;
-                            Request request = clientCommandManager.execute(new Request(command),ifConsole);
-                            if (request != null){
-                                sendAndRecieve(request);
-                            }if (com.equals("execute_script")) {
-                                scriptMode();
-                                ifConsole = true;
-                            }
-                        }
-                    }
-                }catch (NoSuchElementException e) {
-                    Client.scanner = new Scanner(System.in);
-                    clientCommandManager = new ConsoleCommandManager(scriptQueue,Client.scanner,login,password);
-                    System.out.println("Вы вышли из ввода команды команды");
-                }catch (ConnectionException e){
-                    System.out.println("Повторите попытку позже");
-                } if (!found) {
-                    System.out.println("Команда введениа неверно, или такой команды не существует");
+        try {
+            while (true) {
+                System.out.print("Введите логин: ");
+                login = Client.scanner.nextLine();
+                if (login.equals("Server")) {
+                    System.out.println("Данный логин не доступен");
+                } else {
+                    break;
                 }
             }
+            System.out.print("Введите пароль: ");
+            password = Client.scanner.nextLine();
+            sendAndRecieve(new Request(login, password));
+            clientCommandManager = new ConsoleCommandManager(scriptQueue, Client.scanner, login, password);
+            ifConsole = true;
+            while (true) {
+                boolean found = false;
+                System.out.print("Введите команду (help - список команд): ");
+                String com;
+                try {
+                    com = Client.scanner.nextLine().toLowerCase(Locale.ROOT);
+                } catch (NoSuchElementException e) {
+                    System.out.println("\nВы вышли из программы");
+                    break;
+                }
+                if (com.equals("exit")) {
+                    break;
+                } else {
+                    try {
+                        for (Command command : commands) {
+                            if (com.equals(command.getName())) {
+                                found = true;
+                                Request request = clientCommandManager.execute(new Request(command), ifConsole);
+                                if (request != null) {
+                                    sendAndRecieve(request);
+                                }
+                                if (com.equals("execute_script")) {
+                                    scriptMode();
+                                    ifConsole = true;
+                                }
+                            }
+                        }
+                    } catch (NoSuchElementException e) {
+                        Client.scanner = new Scanner(System.in);
+                        clientCommandManager = new ConsoleCommandManager(scriptQueue, Client.scanner, login, password);
+                        System.out.println("Вы вышли из ввода команды команды");
+                    } catch (ConnectionException e) {
+                        System.out.println("Повторите попытку позже");
+                    }
+                    if (!found) {
+                        System.out.println("Команда введениа неверно, или такой команды не существует");
+                    }
+                }
+            }
+        }catch (ConnectionException e) {
+            System.out.println("Повторите попытку позже");
         }
     }
 

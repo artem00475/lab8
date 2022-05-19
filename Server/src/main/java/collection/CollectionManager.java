@@ -2,6 +2,7 @@ package collection;
 
 
 import DataBase.DBManager;
+import exceptions.IdException;
 import person.*;
 
 import java.time.LocalDateTime;
@@ -100,10 +101,8 @@ public class CollectionManager {
     /**
      * Удаляет все элементы из коллекции
      */
-    public void removeAll(){
-        Person.removeAllFromIdArray();
-        collection.clear();
-
+    public boolean removeAll(){
+        return dbManager.clear();
     }
 
     /**
@@ -111,8 +110,7 @@ public class CollectionManager {
      * @return объект класса {@link Person}
      */
     public Person removeFirstElement(){
-        dbManager.deletePerson(collection.peek().getID());
-        return collection.remove();
+        return dbManager.deleteFirstPerson();
     }
 
     /**
@@ -132,8 +130,12 @@ public class CollectionManager {
      */
     public boolean removeGreater(Person person){
         PriorityQueue<Person> people = collection.stream().filter(person1 -> person1.getHeight()>person.getHeight()).collect(Collectors.toCollection(PriorityQueue<Person>::new));
-        people.stream().forEach(person1 -> dbManager.deletePerson(person1.getID()));
-        return collection.removeAll(people);
+        for (Person person1 : people){
+            if (dbManager.deletePerson(person1.getID())){
+                collection.remove(person1);
+            }else people.remove(person1);
+        }
+        return !(people.isEmpty());
     }
 
     /**

@@ -87,15 +87,21 @@ public class ServerCommandManager implements CommandManager {
     }
 
     public String clearCommand(){
-        collectionManager.removeAll();
-        return "Коллекция очищена";
+        if (collectionManager.getCollection().isEmpty()) {
+            return "Коллекция пуста";
+        }else if (collectionManager.removeAll()) {
+            return "Из коллекции удалены все элементы, принадлежащие вам";
+        }else return "В коллекции нет элементов, принадлежащих вам";
     }
 
     public String removeHeadCommand() {
         if (collectionManager.getCollection().isEmpty()) {
             return "Коллекция пуста";
         } else {
-            return collectionManager.removeFirstElement().toString();
+            Person person = collectionManager.removeFirstElement();
+            if (!(person == null)) {
+                return person.toString();
+            }else return "Нет элементов, созданных вами";
         }
     }
 
@@ -125,14 +131,14 @@ public class ServerCommandManager implements CommandManager {
        if (collectionManager.removeGreater(person)){
            return "Элементы успешно удалены";
        } else {
-           return "В коллекции нет элементов, удовлетворяющих условию";
+           return "В коллекции нет элементов, удовлетворяющих условию, или они не принадлежат вам";
        }
    }
 
    public String removeByIdCommand(int id){
        if (collectionManager.removeElementByID(id)) {
            return "Элемент успешно удалён.";
-       }else {return "Элемента с таким id нет в коллекции или ошибка доступа к БД";}
+       }else {return "Элемента с таким id нет в коллекции или он не принадлежит вам";}
    }
 
    public String updateCommand(int id, Person person){

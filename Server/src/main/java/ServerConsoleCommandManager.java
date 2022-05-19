@@ -24,7 +24,7 @@ public class ServerConsoleCommandManager {
     private boolean ifConsole;
     private final ServerCommandManager serverCommandManager;
     private final String login = "Server";
-    private final int password = 1;
+    private final String password = "1";
 
     public ServerConsoleCommandManager(Scanner scanner,ServerCommandManager serverCommandManager) {
         consoleCommandManager = new ConsoleCommandManager(scriptQueue, scanner,login,password);
@@ -32,6 +32,7 @@ public class ServerConsoleCommandManager {
     }
 
     public boolean run(String com) {
+
         ifConsole = true;
         boolean found = false;
         for (Command command : commands) {

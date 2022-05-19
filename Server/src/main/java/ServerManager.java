@@ -76,12 +76,12 @@ public class ServerManager {
                             }
                         } else if (!(request.getCommand() == null)) {
                             if (dbManager.checkUser(request.getLogin(), request.getPassword()) == 1) {
-                                LOG.log(Level.INFO, "Получен запрос от клиента на выполнение команды " + request.getCommand().getName() + " от авторизованного клиента");
+                                LOG.log(Level.INFO, "Получен запрос на выполнение команды " + request.getCommand().getName() + " от авторизованного клиента");
                                 Answer answer = serverCommandManager.execute(request, true);
                                 sendManager.sendAnswer(answer);
                                 LOG.log(Level.INFO, "Команда " + request.getCommand().getName() + " выполнена и ответ отправлен клиенту");
                             } else {
-                                LOG.log(Level.INFO, "Получен запрос от клиента на выполнение команды " + request.getCommand().getName() + " от неавторизованного клиента");
+                                LOG.log(Level.INFO, "Получен запрос на выполнение команды " + request.getCommand().getName() + " от неавторизованного клиента");
                                 sendManager.sendAnswer(new Answer("Команда не выполнена, клиент не авторизован", true));
                                 LOG.info("Команда не выполнена, клиент не авторизован");
                             }
@@ -89,6 +89,7 @@ public class ServerManager {
                         }
                     }catch (ConnectionException e){
                     } catch (SocketTimeoutException exception) {
+                        dbManager.setUser("Server","1");
                         try {
                             if (System.in.available() > 0) {
                                 String com = scanner.nextLine().toLowerCase(Locale.ROOT);
@@ -109,6 +110,7 @@ public class ServerManager {
                         } catch (NullPointerException | IOException ignored) {
                         }
                     } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
                         sendManager.sendAnswer(new Answer(null, true));
                         LOG.log(Level.WARNING, e.getMessage());
                     }

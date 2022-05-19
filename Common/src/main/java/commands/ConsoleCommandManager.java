@@ -10,9 +10,9 @@ public class ConsoleCommandManager implements CommandManager {
     private final ScriptManager scriptManager;
     private final Scanner scanner;
     private String login;
-    private int password;
+    private String password;
 
-    public ConsoleCommandManager(Deque<String> stringDeque,Scanner scanner,String login,int password) {
+    public ConsoleCommandManager(Deque<String> stringDeque,Scanner scanner,String login,String password) {
         scriptManager = new ScriptManager(stringDeque);
         this.scanner = scanner;
         this.login=login;

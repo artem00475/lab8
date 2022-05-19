@@ -10,36 +10,36 @@ public class Request extends Message implements Serializable {
     private int id= -1;
     private Object object=null;
     private String login;
-    private int password;
+    private String password;
 
     public Request(Command name) {
         this.command=name;
         this.login=null;
-        this.password=-1;
+        this.password="";
     }
-    public Request(String login,int password){
+    public Request(String login,String password){
         this.login=login;
         this.password=password;
     }
-    public Request(Command name, String login, int password){
+    public Request(Command name, String login, String password){
         this.login=login;
         this.command=name;
         this.password=password;
     }
-    public Request(Command name, int id, Object object, String login, int password){
+    public Request(Command name, int id, Object object, String login, String password){
         this.id=id;
         this.command=name;
         this.object=object;
         this.login=login;
         this.password=password;
     }
-    public Request(Command name, Object object,String login, int password){
+    public Request(Command name, Object object,String login, String password){
         this.command=name;
         this.object=object;
         this.login=login;
         this.password=password;
     }
-    public Request(Command name, int id, String login, int password){
+    public Request(Command name, int id, String login, String password){
         this.id=id;
         this.command=name;
         this.login=login;
@@ -58,7 +58,7 @@ public class Request extends Message implements Serializable {
         return id;
     }
 
-    public int getPassword() {return password;}
+    public String getPassword() {return password;}
 
     public String getLogin() {return login;}
 

@@ -1,6 +1,7 @@
 package DataBase;
 
 import exceptions.ConnectionException;
+import org.apache.commons.codec.digest.DigestUtils;
 import person.ColorE;
 import person.ColorH;
 import person.Country;
@@ -10,13 +11,14 @@ import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class DBManager {
     private Connection connection=null;
     private Queue<Person> collection;
     private String login;
-    private int password;
+    private String password;
 
     public boolean connect() {
         try {
@@ -87,9 +89,14 @@ public class DBManager {
         } catch (ParseException e){ return null;}
     }
 
+    public void setUser(String login1,String password1) {
+        this.login=login1;
+        this.password=password1;
+    }
+
     public Person addPerson(Person person){
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PERSONS VALUES(nextval('ID'),?,?,?,current_timestamp,?,?,?,?,?,?,?,?);");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PERSONS VALUES(nextval('ID'),?,?,?,current_timestamp,?,?,?,?,?,?,?,?,?);");
             preparedStatement.setString(1,person.getName());
             preparedStatement.setInt(2,person.getCoordinates().getX());
             preparedStatement.setInt(3,person.getCoordinates().getY());
@@ -101,6 +108,7 @@ public class DBManager {
             preparedStatement.setDouble(9,person.getLocation().getY());
             preparedStatement.setLong(10,person.getLocation().getZ());
             preparedStatement.setString(11,person.getLocation().getName());
+            preparedStatement.setString(12,login);
             preparedStatement.execute();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM PERSONS WHERE id = currval('id');");
@@ -113,13 +121,54 @@ public class DBManager {
 
     public boolean deletePerson(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM PERSONS WHERE id = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM PERSONS WHERE id =? and userName=?;");
             preparedStatement.setInt(1,id);
+            preparedStatement.setString(2,login);
             if (preparedStatement.executeUpdate()>0){
                 return true;
             }else {return false;}
         } catch (SQLException e) {
             throw new ConnectionException("Ошибка доступа к БД");
+        }
+    }
+
+    public boolean clear() {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM PERSONS WHERE userNAme=?;");
+            preparedStatement.setString(1,login);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Queue<Person> people = new PriorityQueue<>();
+            while (resultSet.next()){
+                people.add(readPerson(resultSet));
+            }
+            if (!people.isEmpty()) {
+                people.stream().forEach(person -> {
+                    deletePerson(person.getID());
+                    collection.remove(person);
+                });
+                return true;
+            }else return false;
+        }catch (SQLException e) {
+            throw new ConnectionException("Ошибка доступа БД");
+        }
+    }
+
+    public Person deleteFirstPerson(){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM PERSONS WHERE userNAme=?;");
+            preparedStatement.setString(1,login);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Queue<Person> people = new PriorityQueue<>();
+            while (resultSet.next()){
+                people.add(readPerson(resultSet));
+            }
+            if (!people.isEmpty()) {
+                deletePerson(people.peek().getID());
+                collection.remove(people.peek());
+                return people.peek();
+            }else return null;
+        }catch (SQLException e) {
+            throw new ConnectionException("Ошибка доступа БД");
         }
     }
 
@@ -157,11 +206,12 @@ public class DBManager {
         }
     }
 
-    public boolean checkPass(String login, int password) {
+    public boolean checkPass(String login, String  password) {
+        password = hashPass(password);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM USERS WHERE userNAme = ? and password = ?;");
             preparedStatement.setString(1,login);
-            preparedStatement.setInt(2,password);
+            preparedStatement.setString(2,password);
             preparedStatement.execute();
             return (preparedStatement.getResultSet().next());
         } catch (SQLException e) {
@@ -169,7 +219,7 @@ public class DBManager {
         }
     }
 
-    public short checkUser(String login, int password) {
+    public short checkUser(String login, String password) {
         if (checkLogin(login)) {
             if (checkPass(login,password)) {
                 this.login = login;
@@ -185,16 +235,20 @@ public class DBManager {
         }
     }
 
-    public boolean addUser(String login,int password) {
+    public boolean addUser(String login,String password) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO USERS VALUES(?,?);");
             preparedStatement.setString(1,login);
-            preparedStatement.setInt(2,password);
+            preparedStatement.setString(2,hashPass(password));
             if (preparedStatement.executeUpdate()>0){
                 return true;
             }else {return false;}
         } catch (SQLException e) {
             throw new ConnectionException("Ошибка доступа к БД");
         }
+    }
+
+    public String hashPass(String password) {
+        return DigestUtils.sha1Hex(password);
     }
 }
