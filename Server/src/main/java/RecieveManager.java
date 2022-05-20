@@ -21,7 +21,7 @@ public class RecieveManager {
     public Request recieveRequest() throws IOException, ClassNotFoundException {
         byte[] bufer = new byte[1024*1024];
         DatagramPacket packet = new DatagramPacket(bufer,bufer.length);
-        datagramSocket.setSoTimeout(150);
+        datagramSocket.setSoTimeout(100);
         datagramSocket.receive(packet);
         clientAdress = packet.getAddress();
         clientPort=packet.getPort();

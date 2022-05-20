@@ -55,7 +55,7 @@ public class DBManager {
         }
     }
 
-    public Person readPerson(ResultSet resultSet){
+    public synchronized Person readPerson(ResultSet resultSet){
         int id;
         String name;
         int coordinatesX;
@@ -119,7 +119,7 @@ public class DBManager {
         }
     }
 
-    public boolean deletePerson(int id) {
+    public synchronized boolean deletePerson(int id) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM PERSONS WHERE id =? and userName=?;");
             preparedStatement.setInt(1,id);
@@ -144,7 +144,7 @@ public class DBManager {
             if (!people.isEmpty()) {
                 people.stream().forEach(person -> {
                     deletePerson(person.getID());
-                    collection.remove(person);
+                    collection.remove(collection.stream().filter(person1 -> person1.getID()==person.getID()).findFirst().orElse(null));
                 });
                 return true;
             }else return false;
@@ -164,7 +164,7 @@ public class DBManager {
             }
             if (!people.isEmpty()) {
                 deletePerson(people.peek().getID());
-                collection.remove(people.peek());
+                collection.remove(collection.stream().filter(person -> person.getID()==people.peek().getID()).findFirst().orElse(null));
                 return people.peek();
             }else return null;
         }catch (SQLException e) {
@@ -174,7 +174,7 @@ public class DBManager {
 
     public boolean updatePerson(int id,Person person) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE PERSONS SET name=?,coordinatesX=?,coordinatesY=?,height=?,eyeColor=?,hairColor=?,country=?,locationX=?,locationY=?,locationZ=?,locationName=? WHERE id = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE PERSONS SET name=?,coordinatesX=?,coordinatesY=?,height=?,eyeColor=?,hairColor=?,country=?,locationX=?,locationY=?,locationZ=?,locationName=? WHERE id = ? and userName=?;");
             preparedStatement.setString(1,person.getName());
             preparedStatement.setInt(2,person.getCoordinates().getX());
             preparedStatement.setInt(3,person.getCoordinates().getY());
@@ -187,6 +187,7 @@ public class DBManager {
             preparedStatement.setLong(10,person.getLocation().getZ());
             preparedStatement.setString(11,person.getLocation().getName());
             preparedStatement.setInt(12,id);
+            preparedStatement.setString(13,login);
             if (preparedStatement.executeUpdate()>0){
                 return true;
             }else {return false;}
@@ -219,7 +220,7 @@ public class DBManager {
         }
     }
 
-    public short checkUser(String login, String password) {
+    public synchronized short checkUser(String login, String password) {
         if (checkLogin(login)) {
             if (checkPass(login,password)) {
                 this.login = login;

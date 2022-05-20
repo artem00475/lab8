@@ -2,29 +2,31 @@ package collection;
 
 
 import DataBase.DBManager;
-import exceptions.IdException;
 import person.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.stream.Collectors;
 
 /**
  * Класс, работающий с коллекцией
  */
 public class CollectionManager {
-    private final Queue<Person> collection;
+//    private final Queue<Person> collection;
+    private final  BlockingQueue<Person> collection;
     private final String initDate;
-    private DBManager dbManager;
+    private final DBManager dbManager;
 
     /**
      * Конструктор, задающий параметры объекта
      * Создается коллекция, сохраняется дата создания
      */
     public CollectionManager(DBManager dbManager) {
-        collection = new PriorityQueue<>();
+        collection=new PriorityBlockingQueue<>();
         initDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd.MM.yyyy"));
         this.dbManager=dbManager;
         dbManager.setCollection(collection);
@@ -59,7 +61,7 @@ public class CollectionManager {
      * Добавляет объект класса {@link Person} в коллекцию
      * @param person объект класса {@link Person}
      */
-    public boolean addElement(Person person) {
+    public synchronized boolean addElement(Person person) {
         Person person1 = dbManager.addPerson(person);
         if (!(person1==null)) {
             collection.add(person1);
@@ -72,19 +74,19 @@ public class CollectionManager {
      * @param id id элемента
      * @param p объект класса {@link Person}
      */
-    public boolean updateElement(int id, Person p){
+    public synchronized boolean updateElement(int id, Person p){
         if (dbManager.updatePerson(id,p)){
-        Person person1 = collection.stream().filter(person -> person.getID()==id).findFirst().orElse(null);
-        collection.remove(person1);
-        person1.setName(p.getName());
-        person1.setCoordinates(p.getCoordinates());
-        person1.setHeight(p.getHeight());
-        person1.setEyeColor(p.getEyeColor());
-        person1.setHairColor(p.getHairColor());
-        person1.setNationality(p.getNationality());
-        person1.setLocation(p.getLocation());
-        collection.add(person1);
-        return true;
+            Person person1 = collection.stream().filter(person -> person.getID()==id).findFirst().orElse(null);
+            collection.remove(person1);
+            person1.setName(p.getName());
+            person1.setCoordinates(p.getCoordinates());
+            person1.setHeight(p.getHeight());
+            person1.setEyeColor(p.getEyeColor());
+            person1.setHairColor(p.getHairColor());
+            person1.setNationality(p.getNationality());
+            person1.setLocation(p.getLocation());
+            collection.add(person1);
+            return true;
         }else {return false;}
     }
 
@@ -132,7 +134,7 @@ public class CollectionManager {
         PriorityQueue<Person> people = collection.stream().filter(person1 -> person1.getHeight()>person.getHeight()).collect(Collectors.toCollection(PriorityQueue<Person>::new));
         for (Person person1 : people){
             if (dbManager.deletePerson(person1.getID())){
-                collection.remove(person1);
+                collection.remove(collection.stream().filter(person2 -> person2.getID() == person1.getID()).findFirst().orElse(null));
             }else people.remove(person1);
         }
         return !(people.isEmpty());

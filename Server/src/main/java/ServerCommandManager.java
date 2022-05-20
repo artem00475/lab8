@@ -75,7 +75,7 @@ public class ServerCommandManager implements CommandManager {
                 "Количестов элементов: " + collectionManager.getCollection().size() + "\n";
     }
 
-    public String showCommand(){
+    public synchronized String showCommand(){
         StringBuilder stringBuilder = new StringBuilder();
         if (collectionManager.getCollection().isEmpty()) {
             stringBuilder.append("Нельзя выполнить команду show: коллекция пустая\n");
@@ -86,7 +86,7 @@ public class ServerCommandManager implements CommandManager {
         return stringBuilder.toString();
     }
 
-    public String clearCommand(){
+    public synchronized String clearCommand(){
         if (collectionManager.getCollection().isEmpty()) {
             return "Коллекция пуста";
         }else if (collectionManager.removeAll()) {
@@ -94,7 +94,7 @@ public class ServerCommandManager implements CommandManager {
         }else return "В коллекции нет элементов, принадлежащих вам";
     }
 
-    public String removeHeadCommand() {
+    public synchronized String removeHeadCommand() {
         if (collectionManager.getCollection().isEmpty()) {
             return "Коллекция пуста";
         } else {
@@ -105,7 +105,7 @@ public class ServerCommandManager implements CommandManager {
         }
     }
 
-    public String printFieldAscendingLocationCommand(){
+    public synchronized String printFieldAscendingLocationCommand(){
         StringBuilder stringBuilder = new StringBuilder();
         if (collectionManager.getCollection().isEmpty()) {
             return "Коллекция пуста";
@@ -113,13 +113,13 @@ public class ServerCommandManager implements CommandManager {
         } return stringBuilder.toString();
     }
 
-    public String addCommand(Person person){
+    public synchronized String addCommand(Person person){
         if (collectionManager.addElement(createPerson(person))) {
             return "Элемент успешно добавлен";
         }else return "Объект не добавлен";
    }
 
-   public String addIfMaxCommand(Person person){
+   public synchronized String addIfMaxCommand(Person person){
        if (collectionManager.ifMore(person)) {
            return addCommand(person);
        } else {
@@ -127,7 +127,7 @@ public class ServerCommandManager implements CommandManager {
        }
    }
 
-   public String removeGreaterCommand(Person person){
+   public synchronized String removeGreaterCommand(Person person){
        if (collectionManager.removeGreater(person)){
            return "Элементы успешно удалены";
        } else {
@@ -135,17 +135,17 @@ public class ServerCommandManager implements CommandManager {
        }
    }
 
-   public String removeByIdCommand(int id){
+   public synchronized String removeByIdCommand(int id){
        if (collectionManager.removeElementByID(id)) {
            return "Элемент успешно удалён.";
        }else {return "Элемента с таким id нет в коллекции или он не принадлежит вам";}
    }
 
-   public String updateCommand(int id, Person person){
+   public synchronized String updateCommand(int id, Person person){
         if (collectionManager.updateElement(id,person)){
             return "Элемент успешно обговлен";
         }else {
-            return "Элемента с таким id нет в коллекции";}
+            return "Элемента с таким id нет в коллекции или он не принадлежит вам";}
         }
 
    public String countGreaterThanLocationCommand(Location location){
@@ -153,7 +153,7 @@ public class ServerCommandManager implements CommandManager {
 
    }
 
-   public String filterLessThanEyeColorCommand(ColorE colorE){
+   public synchronized String filterLessThanEyeColorCommand(ColorE colorE){
         StringBuilder stringBuilder = new StringBuilder();
         collectionManager.filterLessThanEyeColor(colorE).forEach(person -> stringBuilder.append(person.toString()).append("\n"));
        if (stringBuilder.length()==0){
