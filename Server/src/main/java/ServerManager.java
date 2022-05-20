@@ -40,7 +40,6 @@ public class ServerManager {
     }
 
     public void run() {
-        System.out.println(Runtime.getRuntime().availableProcessors());
         AtomicBoolean work= new AtomicBoolean(false);
         LOG.log(Level.INFO,"Сервер запущен");
         if (dbManager.connect()) {
@@ -59,9 +58,8 @@ public class ServerManager {
             } else if (initialisator == 0) {
                 LOG.info("В базе данных нет элементов");
             } else LOG.info("Ошибка при чтении БД");
-            ExecutorService executor = Executors.newSingleThreadExecutor();
             try {
-                executor.submit(() -> {
+                new Thread(() -> {
                     while (true) {
                         try {
                             if (System.in.available() > 0) {
@@ -88,7 +86,7 @@ public class ServerManager {
                             break;
                         }
                     }
-                });
+                }).start();
                 ExecutorService executorServiceProcessing = Executors.newFixedThreadPool(3);
                     while (work.get()) {
                         Request request;
@@ -131,7 +129,6 @@ public class ServerManager {
                                 }
                             } catch (RejectedExecutionException ignored) {}
                     }
-                    executor.shutdown();
                     executorServiceProcessing.shutdown();
                     LOG.log(Level.INFO, "Завершение работы сервера");
             } catch (ConnectionException ignored) {}
