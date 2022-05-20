@@ -1,6 +1,7 @@
 
 
 import Messages.Request;
+import RecievedMessages.RecievedMessage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -18,14 +19,14 @@ public class RecieveManager {
         this.datagramSocket=datagramSocket;
     }
 
-    public Request recieveRequest() throws IOException, ClassNotFoundException {
+    public RecievedMessage recieveRequest() throws IOException, ClassNotFoundException {
         byte[] bufer = new byte[1024*1024];
         DatagramPacket packet = new DatagramPacket(bufer,bufer.length);
         datagramSocket.setSoTimeout(100);
         datagramSocket.receive(packet);
         clientAdress = packet.getAddress();
         clientPort=packet.getPort();
-        return (Request) deserialize(packet.getData());
+        return new RecievedMessage((Request) deserialize(packet.getData()),clientAdress,clientPort);
     }
     public int getPort(){
         return clientPort;

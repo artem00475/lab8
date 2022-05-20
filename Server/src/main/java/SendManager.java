@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 public class SendManager {
     private final DatagramSocket datagramSocket;
@@ -15,10 +16,10 @@ public class SendManager {
         this.recieveManager=recieveManager;
     }
 
-    public void sendAnswer(Answer answer) {
+    public void sendAnswer(Answer answer, InetAddress inetAddress,int port) {
         try {
             byte[] buffer = serialize(answer);
-            DatagramPacket output = new DatagramPacket(buffer, buffer.length, recieveManager.getAdress(), recieveManager.getPort());
+            DatagramPacket output = new DatagramPacket(buffer, buffer.length, inetAddress, port);
             datagramSocket.send(output);
         }catch (IOException ignored){}
     }
