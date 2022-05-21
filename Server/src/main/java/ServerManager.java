@@ -88,7 +88,7 @@ public class ServerManager {
                         }
                     }
                 }).start();
-                ExecutorService executorServiceProcessing = Executors.newFixedThreadPool(3);
+                ExecutorService executorServiceProcessing = Executors.newFixedThreadPool(4);
                 List<RecievedMessage> recievedMessages  = Collections.synchronizedList(new ArrayList<>());
                     while (work.get()) {
 //                        Request request;
