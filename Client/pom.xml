@@ -16,7 +16,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>Client</mainClass>
+                            <mainClass>Client.Client</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
