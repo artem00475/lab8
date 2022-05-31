@@ -117,6 +117,14 @@ public class Person implements Serializable,Comparable<Person> {
      */
     public Coordinates getCoordinates(){return coordinates;}
 
+    public Integer getId() {return id;}
+
+    public Integer getCoordinateX() {return coordinates.getX();}
+
+    public Integer getCoordinateY() {return coordinates.getY();}
+
+    public String getDate() {return new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(creationDate);}
+
     /**
      * Возвращает рост человека
      * @return height
@@ -150,6 +158,14 @@ public class Person implements Serializable,Comparable<Person> {
      * @see Location
      */
     public Location getLocation(){return location;}
+
+    public Integer getLocationX(){return location.getX();}
+
+    public Double getLocationY() {return location.getY();}
+
+    public Long getLocationZ() {return location.getZ();}
+
+    public String getLocationName() {return location.getName();}
 
     /**
      * Устанавливает новое имя человека
