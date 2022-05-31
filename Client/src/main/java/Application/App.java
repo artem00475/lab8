@@ -1,5 +1,9 @@
 package Application;
 
+import Client.ClientManager;
+import Requests.RecieveManager;
+import Requests.SendManager;
+import exceptions.ConnectionException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,28 +23,50 @@ import java.text.SimpleDateFormat;
 
 
 public class App extends Application {
+    private String userName;
     private Button reg;
     private Button log;
     private TextField user;
     private PasswordField passwordField;
     private LoginManager loginManager;
+    private static ClientManager clientManager;
+
+    public static void setRequestManagers(RecieveManager recieveManager, SendManager sendManager) {
+        clientManager = new ClientManager(sendManager,recieveManager);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        loginManager = new LoginManager(user,passwordField);
+        loginManager = new LoginManager(clientManager);
         primaryStage.setTitle("Login in");
         primaryStage.setScene(setLoginWindowScene());
         primaryStage.show();
         reg.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                loginManager.signUp();
+                try {
+                    loginManager.signUp(user.getText(), passwordField.getText());
+                }catch (ConnectionException e) {}
             }
         });
         log.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                loginManager.signIn();
+                try {
+                    primaryStage.setScene(setMainWindowScene("Artem"));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+//                try {
+//                    if (loginManager.signIn(user.getText(), passwordField.getText())) {
+//                        try {
+//                            userName = loginManager.getUserName();
+//                            primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }catch (ConnectionException e) {}
             }
         });
     }
@@ -88,8 +114,9 @@ public class App extends Application {
         TableColumn<Person,String> name = new TableColumn<>("Name");
         name.setCellValueFactory(new PropertyValueFactory<Person,String>("name"));
         TableColumn<Person,Integer> coordinateX = new TableColumn<>("CoordinateX");
-        coordinateX.setCellValueFactory(new PropertyValueFactory<Person,Integer>("coordinatesX"));
+        coordinateX.setCellValueFactory(new PropertyValueFactory<Person,Integer>("coordinateX"));
         TableColumn<Person,Integer> coordinateY = new TableColumn<>("CoordinateY");
+        coordinateY.setCellValueFactory(new PropertyValueFactory<Person,Integer>("coordinateY"));
         TableColumn<Person,String> date = new TableColumn<>("Date");
         date.setCellValueFactory(new PropertyValueFactory<Person, String>("date"));
         TableColumn<Person,Double> height = new TableColumn<>("Height");
@@ -103,8 +130,11 @@ public class App extends Application {
         TableColumn<Person,Integer> locationX = new TableColumn<>("LocationX");
         locationX.setCellValueFactory(new PropertyValueFactory<Person,Integer>("locationX"));
         TableColumn<Person,Double> locationY = new TableColumn<>("LocationY");
+        locationY.setCellValueFactory(new PropertyValueFactory<Person,Double>("locationY"));
         TableColumn<Person,Long> locationZ = new TableColumn<>("LocationZ");
+        locationZ.setCellValueFactory(new PropertyValueFactory<Person,Long>("locationZ"));
         TableColumn<Person,String> locationName = new TableColumn<>("LocationName");
+        locationName.setCellValueFactory(new PropertyValueFactory<Person,String>("locationName"));
         tableView.getColumns().addAll(id,name,coordinateX,coordinateY,date,height,eyeColor,hairColor,country,locationX,locationY,locationZ,locationName);
         tableView.setItems(people);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
