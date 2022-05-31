@@ -1,4 +1,9 @@
+package Client;
+
+import Messages.Answer;
 import Messages.Request;
+import Requests.RecieveManager;
+import Requests.SendManager;
 import commands.*;
 import exceptions.ConnectionException;
 
@@ -36,19 +41,12 @@ public class ClientManager {
         this.recieveManager=recieveManager;
     }
 
+    public boolean signUp (String login, String password) {return sendAndRecieve(new Request(login, password)).getErrors();}
+
+    public boolean signIn (String login, String password) {return sendAndRecieve(new Request(login, password)).getErrors();}
+
     public void consoleMode() {
         try {
-            while (true) {
-                System.out.print("Введите логин: ");
-                login = Client.scanner.nextLine();
-                if (login.equals("Server")) {
-                    System.out.println("Данный логин не доступен");
-                } else {
-                    break;
-                }
-            }
-            System.out.print("Введите пароль: ");
-            password = Client.scanner.nextLine();
             sendAndRecieve(new Request(login, password));
             clientCommandManager = new ConsoleCommandManager(scriptQueue, Client.scanner, login, password);
             ifConsole = true;
@@ -120,15 +118,16 @@ public class ClientManager {
         }
     }
 
-    public void sendAndRecieve(Request request){
+    public Answer sendAndRecieve(Request request){
         try {
             sendManager.send(request);
-            System.out.println(recieveManager.recieve().getString());
+            return recieveManager.recieve();
         }catch (SocketTimeoutException e) {
             System.out.println("Сервер не отвечает, повторная попытка получения ответа...");
             try {
                 sendManager.send(request);
                 System.out.println(recieveManager.recieve().getString());
+                return recieveManager.recieve();
             }catch (IOException | ClassNotFoundException exception){
                 throw new ConnectionException("Сервер не отвечает");
             }

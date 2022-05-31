@@ -1,4 +1,8 @@
+package Client;
+
 import Application.App;
+import Requests.RecieveManager;
+import Requests.SendManager;
 
 import java.io.IOException;
 import java.net.*;
@@ -14,12 +18,11 @@ public class Client {
     public static void main(String[] args) throws IOException {
         DatagramChannel client = DatagramChannel.open();
         InetSocketAddress reciever = new InetSocketAddress("localhost",4584);
-        App.run(args);
         scanner = new Scanner(in);
         sendManager = new SendManager(reciever,client);
         recieveManager = new RecieveManager(client);
-        ClientManager clientManager = new ClientManager(sendManager,recieveManager);
-        clientManager.consoleMode();
+        App.setRequestManagers(recieveManager,sendManager);
+        App.run(args);
         client.close();
     }
 }
