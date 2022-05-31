@@ -11,15 +11,17 @@ public class Request extends Message implements Serializable {
     private Object object=null;
     private String login;
     private String password;
+    private boolean register=false;
 
     public Request(Command name) {
         this.command=name;
         this.login=null;
         this.password="";
     }
-    public Request(String login,String password){
+    public Request(String login,String password,boolean register){
         this.login=login;
         this.password=password;
+        this.register=register;
     }
     public Request(Command name, String login, String password){
         this.login=login;
@@ -61,5 +63,7 @@ public class Request extends Message implements Serializable {
     public String getPassword() {return password;}
 
     public String getLogin() {return login;}
+
+    public boolean isRegister() {return register;}
 
 }

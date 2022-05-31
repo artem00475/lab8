@@ -53,20 +53,15 @@ public class App extends Application {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    primaryStage.setScene(setMainWindowScene("Artem"));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-//                try {
-//                    if (loginManager.signIn(user.getText(), passwordField.getText())) {
-//                        try {
-//                            userName = loginManager.getUserName();
-//                            primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }catch (ConnectionException e) {}
+                    if (loginManager.signIn(user.getText(), passwordField.getText())) {
+                        try {
+                            userName = loginManager.getUserName();
+                            primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }catch (ConnectionException e) {}
             }
         });
     }

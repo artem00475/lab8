@@ -91,7 +91,6 @@ public class ServerManager {
                 ExecutorService executorServiceProcessing = Executors.newFixedThreadPool(4);
                 List<RecievedMessage> recievedMessages  = Collections.synchronizedList(new ArrayList<>());
                     while (work.get()) {
-//                        Request request;
                         try {
                                 try {
                                     recievedMessages.add(recieveManager.recieveRequest());
@@ -101,19 +100,22 @@ public class ServerManager {
                                             Request request = recievedMessage.getRequest();
                                             if (recievedMessage.getRequest().getCommand() == null) {
                                                 LOG.info("Получен запрос на авторизацию от клиента " + request.getLogin());
-                                                short checkedUser = dbManager.checkUser(request.getLogin(), request.getPassword());
+                                                short checkedUser = dbManager.checkUser(request.getLogin(), request.getPassword(),request.isRegister());
                                                 if (checkedUser == 1) {
                                                     LOG.info("Клиент авторизован");
                                                     sendManager.sendAnswer(new Answer("Авторизация " + request.getLogin() + " выполнена", false), recievedMessage.getInetAddress(), recievedMessage.getPort());
                                                 } else if (checkedUser == 0) {
                                                     LOG.info("Клиент зарегистрирован");
                                                     sendManager.sendAnswer(new Answer("Регистрация " + request.getLogin() + " выполнена", false), recievedMessage.getInetAddress(), recievedMessage.getPort());
-                                                } else if (checkedUser == -1) {
+                                                } else if (checkedUser == 5 || checkedUser == -1) {
                                                     LOG.info("Клиент не авторизован");
                                                     sendManager.sendAnswer(new Answer("Авторизация " + request.getLogin() + " не выполнена", true), recievedMessage.getInetAddress(), recievedMessage.getPort());
+                                                }else if (checkedUser == 2) {
+                                                    LOG.info("Клиент не зарегистрирован");
+                                                    sendManager.sendAnswer(new Answer("Регистрация " + request.getLogin() + " не выполнена", true), recievedMessage.getInetAddress(), recievedMessage.getPort());
                                                 }
                                             } else if (!(recievedMessage.getRequest().getCommand() == null)) {
-                                                if (dbManager.checkUser(request.getLogin(), request.getPassword()) == 1) {
+                                                if (dbManager.checkUser(request.getLogin(), request.getPassword(),request.isRegister()) == 1) {
                                                     LOG.log(Level.INFO, "Получен запрос на выполнение команды " + request.getCommand().getName() + " от клиента " + request.getLogin());
                                                     Answer answer = serverCommandManager.execute(request, true);
                                                     sendManager.sendAnswer(answer, recievedMessage.getInetAddress(), recievedMessage.getPort());

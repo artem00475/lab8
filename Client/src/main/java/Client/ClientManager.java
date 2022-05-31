@@ -41,13 +41,12 @@ public class ClientManager {
         this.recieveManager=recieveManager;
     }
 
-    public boolean signUp (String login, String password) {return sendAndRecieve(new Request(login, password)).getErrors();}
+    public boolean signUp (String login, String password) {return sendAndRecieve(new Request(login, password,true)).getErrors();}
 
-    public boolean signIn (String login, String password) {return sendAndRecieve(new Request(login, password)).getErrors();}
+    public boolean signIn (String login, String password) {return sendAndRecieve(new Request(login, password,false)).getErrors();}
 
     public void consoleMode() {
         try {
-            sendAndRecieve(new Request(login, password));
             clientCommandManager = new ConsoleCommandManager(scriptQueue, Client.scanner, login, password);
             ifConsole = true;
             while (true) {

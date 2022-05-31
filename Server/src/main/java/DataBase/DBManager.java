@@ -15,7 +15,7 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class DBManager {
-    private Connection connection=null;
+    private Connection connection = null;
     private Queue<Person> collection;
     private String login;
     private String password;
@@ -27,25 +27,27 @@ public class DBManager {
             System.out.println("Драйвер не найден!");
         }
         try {
-            connection = DriverManager.getConnection("jdbc:postgresql://pg/studs");
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/studs", "postgres", "sobuka2100");
             return true;
         } catch (SQLException e) {
             return false;
         }
     }
 
-    public void setCollection(Queue<Person> queue){collection=queue;}
+    public void setCollection(Queue<Person> queue) {
+        collection = queue;
+    }
 
-    public short initializeCollection(){
+    public short initializeCollection() {
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM PERSONS;");
-            short found=0;
-            while (resultSet.next()){
-                found=1;
+            short found = 0;
+            while (resultSet.next()) {
+                found = 1;
                 try {
                     collection.add(readPerson(resultSet));
-                }catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     System.out.println("Объект не добавлен");
                 }
             }
@@ -55,7 +57,7 @@ public class DBManager {
         }
     }
 
-    public synchronized Person readPerson(ResultSet resultSet){
+    public synchronized Person readPerson(ResultSet resultSet) {
         int id;
         String name;
         int coordinatesX;
@@ -83,32 +85,34 @@ public class DBManager {
             locationY = resultSet.getDouble("locationY");
             locationZ = resultSet.getLong("locationZ");
             locationName = resultSet.getString("locationName");
-            return new Person(id,name,coordinatesX,coordinatesY,date,height,eyeColor,hairColor,nationality,locationX,locationY,locationZ,locationName);
+            return new Person(id, name, coordinatesX, coordinatesY, date, height, eyeColor, hairColor, nationality, locationX, locationY, locationZ, locationName);
         } catch (SQLException e) {
             throw new ConnectionException("Ошибка доступа к БД");
-        } catch (ParseException e){ return null;}
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
-    public void setUser(String login1,String password1) {
-        this.login=login1;
-        this.password=password1;
+    public void setUser(String login1, String password1) {
+        this.login = login1;
+        this.password = password1;
     }
 
-    public Person addPerson(Person person){
+    public Person addPerson(Person person) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PERSONS VALUES(nextval('ID'),?,?,?,current_timestamp,?,?,?,?,?,?,?,?,?);");
-            preparedStatement.setString(1,person.getName());
-            preparedStatement.setInt(2,person.getCoordinates().getX());
-            preparedStatement.setInt(3,person.getCoordinates().getY());
-            preparedStatement.setDouble(4,person.getHeight());
-            preparedStatement.setString(5,person.getEyeColor().name());
-            preparedStatement.setString(6,person.getHairColor().name());
-            preparedStatement.setString(7,person.getNationality().name());
-            preparedStatement.setInt(8,person.getLocation().getX());
-            preparedStatement.setDouble(9,person.getLocation().getY());
-            preparedStatement.setLong(10,person.getLocation().getZ());
-            preparedStatement.setString(11,person.getLocation().getName());
-            preparedStatement.setString(12,login);
+            preparedStatement.setString(1, person.getName());
+            preparedStatement.setInt(2, person.getCoordinates().getX());
+            preparedStatement.setInt(3, person.getCoordinates().getY());
+            preparedStatement.setDouble(4, person.getHeight());
+            preparedStatement.setString(5, person.getEyeColor().name());
+            preparedStatement.setString(6, person.getHairColor().name());
+            preparedStatement.setString(7, person.getNationality().name());
+            preparedStatement.setInt(8, person.getLocation().getX());
+            preparedStatement.setDouble(9, person.getLocation().getY());
+            preparedStatement.setLong(10, person.getLocation().getZ());
+            preparedStatement.setString(11, person.getLocation().getName());
+            preparedStatement.setString(12, login);
             preparedStatement.execute();
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM PERSONS WHERE id = currval('id');");
@@ -122,11 +126,13 @@ public class DBManager {
     public synchronized boolean deletePerson(int id) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM PERSONS WHERE id =? and userName=?;");
-            preparedStatement.setInt(1,id);
-            preparedStatement.setString(2,login);
-            if (preparedStatement.executeUpdate()>0){
+            preparedStatement.setInt(1, id);
+            preparedStatement.setString(2, login);
+            if (preparedStatement.executeUpdate() > 0) {
                 return true;
-            }else {return false;}
+            } else {
+                return false;
+            }
         } catch (SQLException e) {
             throw new ConnectionException("Ошибка доступа к БД");
         }
@@ -135,62 +141,64 @@ public class DBManager {
     public boolean clear() {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM PERSONS WHERE userNAme=?;");
-            preparedStatement.setString(1,login);
+            preparedStatement.setString(1, login);
             ResultSet resultSet = preparedStatement.executeQuery();
             Queue<Person> people = new PriorityQueue<>();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 people.add(readPerson(resultSet));
             }
             if (!people.isEmpty()) {
                 people.stream().forEach(person -> {
                     deletePerson(person.getID());
-                    collection.remove(collection.stream().filter(person1 -> person1.getID()==person.getID()).findFirst().orElse(null));
+                    collection.remove(collection.stream().filter(person1 -> person1.getID() == person.getID()).findFirst().orElse(null));
                 });
                 return true;
-            }else return false;
-        }catch (SQLException e) {
+            } else return false;
+        } catch (SQLException e) {
             throw new ConnectionException("Ошибка доступа БД");
         }
     }
 
-    public Person deleteFirstPerson(){
+    public Person deleteFirstPerson() {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM PERSONS WHERE userNAme=?;");
-            preparedStatement.setString(1,login);
+            preparedStatement.setString(1, login);
             ResultSet resultSet = preparedStatement.executeQuery();
             Queue<Person> people = new PriorityQueue<>();
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 people.add(readPerson(resultSet));
             }
             if (!people.isEmpty()) {
                 deletePerson(people.peek().getID());
-                collection.remove(collection.stream().filter(person -> person.getID()==people.peek().getID()).findFirst().orElse(null));
+                collection.remove(collection.stream().filter(person -> person.getID() == people.peek().getID()).findFirst().orElse(null));
                 return people.peek();
-            }else return null;
-        }catch (SQLException e) {
+            } else return null;
+        } catch (SQLException e) {
             throw new ConnectionException("Ошибка доступа БД");
         }
     }
 
-    public boolean updatePerson(int id,Person person) {
+    public boolean updatePerson(int id, Person person) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE PERSONS SET name=?,coordinatesX=?,coordinatesY=?,height=?,eyeColor=?,hairColor=?,country=?,locationX=?,locationY=?,locationZ=?,locationName=? WHERE id = ? and userName=?;");
-            preparedStatement.setString(1,person.getName());
-            preparedStatement.setInt(2,person.getCoordinates().getX());
-            preparedStatement.setInt(3,person.getCoordinates().getY());
-            preparedStatement.setDouble(4,person.getHeight());
-            preparedStatement.setString(5,person.getEyeColor().name());
-            preparedStatement.setString(6,person.getHairColor().name());
-            preparedStatement.setString(7,person.getNationality().name());
-            preparedStatement.setInt(8,person.getLocation().getX());
-            preparedStatement.setDouble(9,person.getLocation().getY());
-            preparedStatement.setLong(10,person.getLocation().getZ());
-            preparedStatement.setString(11,person.getLocation().getName());
-            preparedStatement.setInt(12,id);
-            preparedStatement.setString(13,login);
-            if (preparedStatement.executeUpdate()>0){
+            preparedStatement.setString(1, person.getName());
+            preparedStatement.setInt(2, person.getCoordinates().getX());
+            preparedStatement.setInt(3, person.getCoordinates().getY());
+            preparedStatement.setDouble(4, person.getHeight());
+            preparedStatement.setString(5, person.getEyeColor().name());
+            preparedStatement.setString(6, person.getHairColor().name());
+            preparedStatement.setString(7, person.getNationality().name());
+            preparedStatement.setInt(8, person.getLocation().getX());
+            preparedStatement.setDouble(9, person.getLocation().getY());
+            preparedStatement.setLong(10, person.getLocation().getZ());
+            preparedStatement.setString(11, person.getLocation().getName());
+            preparedStatement.setInt(12, id);
+            preparedStatement.setString(13, login);
+            if (preparedStatement.executeUpdate() > 0) {
                 return true;
-            }else {return false;}
+            } else {
+                return false;
+            }
         } catch (SQLException e) {
             throw new ConnectionException("Ошибка доступа к БД");
         }
@@ -199,7 +207,7 @@ public class DBManager {
     public boolean checkLogin(String login) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM USERS WHERE userNAme = ?;");
-            preparedStatement.setString(1,login);
+            preparedStatement.setString(1, login);
             preparedStatement.execute();
             return (preparedStatement.getResultSet().next());
         } catch (SQLException e) {
@@ -207,12 +215,12 @@ public class DBManager {
         }
     }
 
-    public boolean checkPass(String login, String  password) {
+    public boolean checkPass(String login, String password) {
         password = hashPass(password);
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM USERS WHERE userNAme = ? and password = ?;");
-            preparedStatement.setString(1,login);
-            preparedStatement.setString(2,password);
+            preparedStatement.setString(1, login);
+            preparedStatement.setString(2, password);
             preparedStatement.execute();
             return (preparedStatement.getResultSet().next());
         } catch (SQLException e) {
@@ -220,20 +228,21 @@ public class DBManager {
         }
     }
 
-    public synchronized short checkUser(String login, String password) {
+    public synchronized short checkUser(String login, String password, boolean register) {
         if (checkLogin(login)) {
-            if (checkPass(login,password)) {
+            if (register) return 2;
+            if (checkPass(login, password)) {
                 this.login = login;
-                this.password=password;
+                this.password = password;
                 return 1;
             } else return -1;
-        }  else {
-            if (addUser(login,password)) {
+        } else if (register) {
+            if (addUser(login, password)) {
                 this.login = login;
                 this.password = password;
                 return 0;
-            }else return -2;
-        }
+            }else return 2;
+        } else return 5;
     }
 
     public boolean addUser(String login,String password) {

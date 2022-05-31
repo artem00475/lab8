@@ -22,7 +22,7 @@ public class LoginManager {
     public boolean signUp (String userName, String password) {
         alert.setTitle("Sign up");
         try {
-            if (clientManager.signUp(userName, password)) {
+            if (!clientManager.signUp(userName, password)) {
                 alert.setContentText("Sign up success");
                 alert.showAndWait();
                 return true;
@@ -41,7 +41,7 @@ public class LoginManager {
     public boolean signIn(String userName, String password) {
         alert.setTitle("Sign in");
         try {
-            if (clientManager.signIn(userName,password)) {
+            if (!clientManager.signIn(userName,password)) {
                 userName = userName;
                 alert.setTitle("Sign in");
                 alert.setContentText("Sign in success");
