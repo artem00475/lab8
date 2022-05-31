@@ -1,3 +1,5 @@
+import Application.App;
+
 import java.io.IOException;
 import java.net.*;
 import java.nio.channels.DatagramChannel;
@@ -12,6 +14,7 @@ public class Client {
     public static void main(String[] args) throws IOException {
         DatagramChannel client = DatagramChannel.open();
         InetSocketAddress reciever = new InetSocketAddress("localhost",4584);
+        App.run(args);
         scanner = new Scanner(in);
         sendManager = new SendManager(reciever,client);
         recieveManager = new RecieveManager(client);
