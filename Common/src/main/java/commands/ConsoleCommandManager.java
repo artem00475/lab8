@@ -2,6 +2,8 @@ package commands;
 
 import Messages.Request;
 import Script.*;
+
+import java.io.File;
 import java.util.Deque;
 import java.util.Scanner;
 
@@ -55,5 +57,10 @@ public class ConsoleCommandManager implements CommandManager {
                 scriptManager.addFile(scriptManager.getFile());
             }
         }return null;
+    }
+
+    public void getScriptManager(File file) {
+        scriptManager.createScriptFlesArray();
+        scriptManager.addFile(file);
     }
 }

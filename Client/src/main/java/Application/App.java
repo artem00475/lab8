@@ -23,13 +23,27 @@ import java.text.SimpleDateFormat;
 
 
 public class App extends Application {
-    private String userName;
     private Button reg;
     private Button log;
+    private Button helpCommand = new Button("Help");
+    private Button addCommand = new Button("Add");
+    private Button addIfMaxCommand = new Button("Add If Max");
+    private Button clearCommand = new Button("Clear");
+    private Button countCommand = new Button("Count Greater Than Location");
+    private Button scriptCommand = new Button("Script");
+    private Button filterCommand = new Button("Filter Less Than Eye Color");
+    private Button infoCommand = new Button("Info");
+    private Button printCommand = new Button("Print Field Ascending Location");
+    private Button removeByIdCommand = new Button("Remove By Id");
+    private Button removeGreaterCommand = new Button("Remove Greater");
+    private Button removeHeadCommand = new Button("Remove Head");
+    private Button updateCommand = new Button("Update");
     private TextField user;
     private PasswordField passwordField;
     private LoginManager loginManager;
     private static ClientManager clientManager;
+    private CommandsManager commandsManager;
+    private PersonCreatorController personCreatorController;
 
     public static void setRequestManagers(RecieveManager recieveManager, SendManager sendManager) {
         clientManager = new ClientManager(sendManager,recieveManager);
@@ -37,10 +51,16 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        loginManager = new LoginManager(clientManager);
+        Stage stage =new Stage();
+        personCreatorController =new PersonCreatorController(stage);
+        commandsManager=new CommandsManager(clientManager,personCreatorController);
+        loginManager = new LoginManager(clientManager,commandsManager);
         primaryStage.setTitle("Login in");
         primaryStage.setScene(setLoginWindowScene());
         primaryStage.show();
+
+
+
         reg.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -55,7 +75,6 @@ public class App extends Application {
                 try {
                     if (loginManager.signIn(user.getText(), passwordField.getText())) {
                         try {
-                            userName = loginManager.getUserName();
                             primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -64,6 +83,102 @@ public class App extends Application {
                 }catch (ConnectionException e) {}
             }
         });
+
+        helpCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.help();
+            }
+        });
+
+        infoCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.info();
+            }
+        });
+
+        printCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.print();
+            }
+        });
+
+        addCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                //commandsManager.setPersonStage();
+                commandsManager.add();
+            }
+        });
+
+        addIfMaxCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.addIfMax();
+            }
+        });
+
+        removeByIdCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.removeById();
+            }
+        });
+
+        updateCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.updateById();
+            }
+        });
+
+        removeHeadCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.removeHead();
+            }
+        });
+
+        removeGreaterCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.removeGreater();
+            }
+        });
+
+        clearCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.clear();
+            }
+        });
+
+        filterCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.filterEyeColor();
+            }
+        });
+
+        countCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.countLocation();
+            }
+        });
+
+        scriptCommand.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                commandsManager.script();
+            }
+        });
+
+
+
+
     }
 
     public static void run(String[] args) {
@@ -148,21 +263,21 @@ public class App extends Application {
         VBox vBox1 = new VBox();
         vBox1.getChildren().add(mainWindow);
         FlowPane flowPane = new FlowPane();
-        Button helpCommand = new Button("Help");
-        Button addCommand = new Button("Add");
-        Button addIfMaxCommand = new Button("Add If Max");
-        Button clearCommand = new Button("Clear");
-        Button countCommand = new Button("Count Greater Than Location");
-        Button scriptCommand = new Button("Script");
-        Button filterCommand = new Button("Filter Less Than Eye Color");
-        Button infoCommand = new Button("Info");
-        Button printCommand = new Button("Print Field Ascending Location");
-        Button removeByIdCommand = new Button("Remove By Id");
-        Button removeGreaterCommand = new Button("Remove Greater");
-        Button removeHeadCommand = new Button("Remove Head");
-        Button showCommand = new Button("Show");
-        Button updateCommand = new Button("Update");
-        flowPane.getChildren().addAll(helpCommand,addCommand,addIfMaxCommand,clearCommand,countCommand,scriptCommand,filterCommand,infoCommand,printCommand,removeByIdCommand,removeGreaterCommand,removeHeadCommand,showCommand,updateCommand);
+//        Button helpCommand = new Button("Help");
+//        Button addCommand = new Button("Add");
+//        Button addIfMaxCommand = new Button("Add If Max");
+//        Button clearCommand = new Button("Clear");
+//        Button countCommand = new Button("Count Greater Than Location");
+//        Button scriptCommand = new Button("Script");
+//        Button filterCommand = new Button("Filter Less Than Eye Color");
+//        Button infoCommand = new Button("Info");
+//        Button printCommand = new Button("Print Field Ascending Location");
+//        Button removeByIdCommand = new Button("Remove By Id");
+//        Button removeGreaterCommand = new Button("Remove Greater");
+//        Button removeHeadCommand = new Button("Remove Head");
+//        Button showCommand = new Button("Show");
+//        Button updateCommand = new Button("Update");
+        flowPane.getChildren().addAll(helpCommand,addCommand,addIfMaxCommand,clearCommand,countCommand,scriptCommand,filterCommand,infoCommand,printCommand,removeByIdCommand,removeGreaterCommand,removeHeadCommand,updateCommand);
         vBox1.getChildren().add(flowPane);
         VBox.setMargin(flowPane,new Insets(15.0,50,10,50));
         flowPane.setAlignment(Pos.CENTER);
@@ -171,4 +286,5 @@ public class App extends Application {
         StackPane.setAlignment(userN,Pos.TOP_CENTER);
         return new Scene(vBox1,1000,700);
     }
+
 }

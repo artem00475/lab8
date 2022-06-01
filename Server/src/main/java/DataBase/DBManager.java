@@ -100,7 +100,7 @@ public class DBManager {
 
     public Person addPerson(Person person) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PERSONS VALUES(nextval('ID'),?,?,?,current_timestamp,?,?,?,?,?,?,?,?,?);");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO PERSONS VALUES(default ,?,?,?,current_timestamp,?,?,?,?,?,?,?,?,?);");
             preparedStatement.setString(1, person.getName());
             preparedStatement.setInt(2, person.getCoordinates().getX());
             preparedStatement.setInt(3, person.getCoordinates().getY());
@@ -115,7 +115,7 @@ public class DBManager {
             preparedStatement.setString(12, login);
             preparedStatement.execute();
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM PERSONS WHERE id = currval('id');");
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM PERSONS WHERE id = currval('persons_id_seq');");
             resultSet.next();
             return readPerson(resultSet);
         } catch (SQLException e) {

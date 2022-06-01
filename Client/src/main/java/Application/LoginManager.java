@@ -12,11 +12,13 @@ public class LoginManager {
     private String password;
     private Alert alert;
     private ClientManager clientManager;
+    private CommandsManager commandsManager;
 
-    public LoginManager (ClientManager clientManager) {
+    public LoginManager (ClientManager clientManager, CommandsManager commandsManager) {
         alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         this.clientManager=clientManager;
+        this.commandsManager=commandsManager;
     }
 
     public boolean signUp (String userName, String password) {
@@ -42,10 +44,12 @@ public class LoginManager {
         alert.setTitle("Sign in");
         try {
             if (!clientManager.signIn(userName,password)) {
-                userName = userName;
+                this.userName = userName;
                 alert.setTitle("Sign in");
                 alert.setContentText("Sign in success");
                 alert.showAndWait();
+                clientManager.setUser(userName, password);
+                commandsManager.setUser(userName, password);
                 return true;
             } else {
                 alert.setTitle("Sign in");
