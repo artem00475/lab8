@@ -83,28 +83,28 @@ public class App extends Application {
                 }catch (ConnectionException e) {}
             }
         });
-
+        helpCommand.setTooltip(new Tooltip("Click the button\nto see commands help"));
         helpCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.help();
             }
         });
-
+        infoCommand.setTooltip(new Tooltip("Click the button\nto see info about collection"));
         infoCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.info();
             }
         });
-
+        printCommand.setTooltip(new Tooltip("Click the button\nto print fields ascending Location"));
         printCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.print();
             }
         });
-
+        addCommand.setTooltip(new Tooltip("Click the button\nto add element"));
         addCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -112,63 +112,63 @@ public class App extends Application {
                 commandsManager.add();
             }
         });
-
+        addIfMaxCommand.setTooltip(new Tooltip("Click the button\nto add element that is more then max"));
         addIfMaxCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.addIfMax();
             }
         });
-
+        removeByIdCommand.setTooltip(new Tooltip("Click the button\nto remove element by id"));
         removeByIdCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.removeById();
             }
         });
-
+        updateCommand.setTooltip(new Tooltip("Click the button\nto update element by id"));
         updateCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.updateById();
             }
         });
-
+        removeHeadCommand.setTooltip(new Tooltip("Click the button\nto remove first element"));
         removeHeadCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.removeHead();
             }
         });
-
+        removeGreaterCommand.setTooltip(new Tooltip("Click the button\nto remove elements that greater than it"));
         removeGreaterCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.removeGreater();
             }
         });
-
+        clearCommand.setTooltip(new Tooltip("Click the button\nto clear collection"));
         clearCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.clear();
             }
         });
-
+        filterCommand.setTooltip(new Tooltip("Click the button\nto filter less than EyeColor"));
         filterCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.filterEyeColor();
             }
         });
-
+        countCommand.setTooltip(new Tooltip("Click the button\nto count elements with greater Location"));
         countCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 commandsManager.countLocation();
             }
         });
-
+        scriptCommand.setTooltip(new Tooltip("Click the button\nto execute script from file"));
         scriptCommand.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
