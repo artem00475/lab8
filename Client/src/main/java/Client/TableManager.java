@@ -1,6 +1,6 @@
 package Client;
 
-import Messages.Answer;
+import Application.MapManager;
 import Messages.CollectionInfo;
 import Messages.Request;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -19,6 +19,7 @@ public class TableManager {
     private InetSocketAddress inetSocketAddress;
     private ObservableList<Person> people;
     private Thread thread;
+    private SimpleBooleanProperty work;
 
     public TableManager(SimpleBooleanProperty simpleBooleanProperty, ObservableList<Person> people) {
         try {
@@ -27,10 +28,12 @@ public class TableManager {
             e.printStackTrace();
         }
         inetSocketAddress = new InetSocketAddress("localhost",4584);
-        SimpleBooleanProperty work = new SimpleBooleanProperty();
+        work = new SimpleBooleanProperty();
         work.bind(simpleBooleanProperty);
         this.people=people;
-        thread= new Thread(() -> run(work));
+        thread= new Thread(() -> {
+            run();
+        });
     }
 
     public DatagramChannel getDatagramChannel() {return datagramChannel;}
@@ -41,12 +44,13 @@ public class TableManager {
         inetSocketAddress= new InetSocketAddress("localhost",4585);
     }
 
-    public void run(SimpleBooleanProperty work) {
+    public void run() {
         while (work.get()) {
             try {
                 CollectionInfo collectionInfo = (CollectionInfo) recieve();
                 people.clear();
                 people.addAll(collectionInfo.getCollection());
+                MapManager.drawPersons(collectionInfo.getCollection());
             }catch (AsynchronousCloseException ignored) {
             } catch (IOException e) {
                 e.printStackTrace();

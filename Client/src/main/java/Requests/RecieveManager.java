@@ -28,19 +28,6 @@ public class RecieveManager {
         ObjectInputStream is = new ObjectInputStream(in);
         return is.readObject();
     }
-//    public void printRecieved() {
-//        try {
-//            System.out.println(recieve().getString());
-//        }catch (SocketTimeoutException e) {
-//            System.out.println("Сервер не отвечает, повторная попытка получения ответа...");
-//            try {
-//                System.out.println(recieve().getString());
-//            }catch (IOException | ClassNotFoundException exception){
-//                throw new ConnectionException("Сервер не отвечает");
-//            }
-//        } catch (IOException | ClassNotFoundException e){
-//            throw new ConnectionException("Что-то пошло не так");
-//        }
-//    }
+
 
 }

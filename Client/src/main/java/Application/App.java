@@ -7,18 +7,20 @@ import Requests.SendManager;
 import exceptions.ConnectionException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import person.*;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 
 public class App extends Application {
@@ -44,13 +46,26 @@ public class App extends Application {
     private CommandsManager commandsManager;
     private TableView<Person> tableView;
     private static ObservableList<Person> people;
+    private Group map;
+    private static ObservableList<Circle> circles;
 
     public static void setRequestManagers(RecieveManager recieveManager, SendManager sendManager, TableManager tableManager) {
         clientManager = new ClientManager(sendManager,recieveManager,tableManager);
     }
 
+
     @Override
     public void start(Stage primaryStage) {
+        map = new Group();
+        circles = FXCollections.observableArrayList();
+        MapManager.setCircles(circles);
+        circles.addListener(new ListChangeListener<Circle>() {
+            @Override
+            public void onChanged(Change<? extends Circle> c) {
+                map.getChildren().clear();
+                map.getChildren().addAll(circles);
+            }
+        });
         Stage stage =new Stage();
         PersonCreatorController personCreatorController = new PersonCreatorController(stage);
         commandsManager=new CommandsManager(clientManager, personCreatorController);
@@ -58,8 +73,6 @@ public class App extends Application {
         primaryStage.setTitle("Login in");
         primaryStage.setScene(setLoginWindowScene());
         primaryStage.show();
-
-
 
         reg.setOnAction(event -> {
             try {
@@ -84,12 +97,7 @@ public class App extends Application {
         printCommand.setTooltip(new Tooltip("Click the button\nto print fields ascending Location"));
         printCommand.setOnAction(event -> commandsManager.print());
         addCommand.setTooltip(new Tooltip("Click the button\nto add element"));
-        addCommand.setOnAction(event -> {
-            //commandsManager.setPersonStage();
-            commandsManager.add();
-//                tableView.setItems(people);
-            //people.add(new Person(3,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),140.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"));
-        });
+        addCommand.setOnAction(event -> {commandsManager.add();});
         addIfMaxCommand.setTooltip(new Tooltip("Click the button\nto add element that is more then max"));
         addIfMaxCommand.setOnAction(event -> commandsManager.addIfMax());
         removeByIdCommand.setTooltip(new Tooltip("Click the button\nto remove element by id"));
@@ -147,14 +155,11 @@ public class App extends Application {
 
     public Scene setMainWindowScene(String userName) throws ParseException {
         StackPane mainWindow = new StackPane();
-        //HBox hBox = new HBox();
         Label userN = new Label(userName);
         TabPane tabPane = new TabPane();
         Tab tab =new Tab();
         tab.setText("Table");
         tableView =new TableView<>();
-        //people.addAll(new Person(1,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),140.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"),
-                //new Person(2,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),150.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"));
         TableColumn<Person,Integer> id = new TableColumn<>("Id");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Person,String> name = new TableColumn<>("Name");
@@ -190,29 +195,18 @@ public class App extends Application {
         tab.setContent(pane);
         Tab tab1 =new Tab();
         tab1.setText("Map");
-        tab1.setContent(new Label("map"));
+        tab1.setContent(map);
         tabPane.getTabs().addAll(tab,tab1);
-        //hBox.getChildren().addAll(tabPane,userN);
-        //hBox.setAlignment(Pos.TOP_CENTER);
-        mainWindow.getChildren().addAll(tabPane,userN);
+        ObservableList<String> language = FXCollections.observableArrayList("Русский", "Dutch", "Lietuvių", "Español");
+        ComboBox<String> languageField = new ComboBox<>(language);
+        languageField.setValue("Русский");
+        mainWindow.getChildren().addAll(tabPane,userN,languageField);
         StackPane.setMargin(userN,new Insets(5,0,0,0));
+        StackPane.setMargin(languageField, new Insets(2,0,0,0));
+        StackPane.setAlignment(languageField,Pos.TOP_RIGHT);
         VBox vBox1 = new VBox();
         vBox1.getChildren().add(mainWindow);
         FlowPane flowPane = new FlowPane();
-//        Button helpCommand = new Button("Help");
-//        Button addCommand = new Button("Add");
-//        Button addIfMaxCommand = new Button("Add If Max");
-//        Button clearCommand = new Button("Clear");
-//        Button countCommand = new Button("Count Greater Than Location");
-//        Button scriptCommand = new Button("Script");
-//        Button filterCommand = new Button("Filter Less Than Eye Color");
-//        Button infoCommand = new Button("Info");
-//        Button printCommand = new Button("Print Field Ascending Location");
-//        Button removeByIdCommand = new Button("Remove By Id");
-//        Button removeGreaterCommand = new Button("Remove Greater");
-//        Button removeHeadCommand = new Button("Remove Head");
-//        Button showCommand = new Button("Show");
-//        Button updateCommand = new Button("Update");
         flowPane.getChildren().addAll(helpCommand,addCommand,addIfMaxCommand,clearCommand,countCommand,scriptCommand,filterCommand,infoCommand,printCommand,removeByIdCommand,removeGreaterCommand,removeHeadCommand,updateCommand);
         vBox1.getChildren().add(flowPane);
         VBox.setMargin(flowPane,new Insets(15.0,50,10,50));
