@@ -7,8 +7,6 @@ import exceptions.ConnectionException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -25,35 +23,36 @@ import java.text.SimpleDateFormat;
 public class App extends Application {
     private Button reg;
     private Button log;
-    private Button helpCommand = new Button("Help");
-    private Button addCommand = new Button("Add");
-    private Button addIfMaxCommand = new Button("Add If Max");
-    private Button clearCommand = new Button("Clear");
-    private Button countCommand = new Button("Count Greater Than Location");
-    private Button scriptCommand = new Button("Script");
-    private Button filterCommand = new Button("Filter Less Than Eye Color");
-    private Button infoCommand = new Button("Info");
-    private Button printCommand = new Button("Print Field Ascending Location");
-    private Button removeByIdCommand = new Button("Remove By Id");
-    private Button removeGreaterCommand = new Button("Remove Greater");
-    private Button removeHeadCommand = new Button("Remove Head");
-    private Button updateCommand = new Button("Update");
+    private final Button helpCommand = new Button("Help");
+    private final Button addCommand = new Button("Add");
+    private final Button addIfMaxCommand = new Button("Add If Max");
+    private final Button clearCommand = new Button("Clear");
+    private final Button countCommand = new Button("Count Greater Than Location");
+    private final Button scriptCommand = new Button("Script");
+    private final Button filterCommand = new Button("Filter Less Than Eye Color");
+    private final Button infoCommand = new Button("Info");
+    private final Button printCommand = new Button("Print Field Ascending Location");
+    private final Button removeByIdCommand = new Button("Remove By Id");
+    private final Button removeGreaterCommand = new Button("Remove Greater");
+    private final Button removeHeadCommand = new Button("Remove Head");
+    private final Button updateCommand = new Button("Update");
     private TextField user;
     private PasswordField passwordField;
     private LoginManager loginManager;
     private static ClientManager clientManager;
     private CommandsManager commandsManager;
-    private PersonCreatorController personCreatorController;
+    private TableView<Person> tableView;
+    private ObservableList<Person> people = FXCollections.observableArrayList();
 
     public static void setRequestManagers(RecieveManager recieveManager, SendManager sendManager) {
         clientManager = new ClientManager(sendManager,recieveManager);
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         Stage stage =new Stage();
-        personCreatorController =new PersonCreatorController(stage);
-        commandsManager=new CommandsManager(clientManager,personCreatorController);
+        PersonCreatorController personCreatorController = new PersonCreatorController(stage);
+        commandsManager=new CommandsManager(clientManager, personCreatorController);
         loginManager = new LoginManager(clientManager,commandsManager);
         primaryStage.setTitle("Login in");
         primaryStage.setScene(setLoginWindowScene());
@@ -61,120 +60,53 @@ public class App extends Application {
 
 
 
-        reg.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    loginManager.signUp(user.getText(), passwordField.getText());
-                }catch (ConnectionException e) {}
-            }
+        reg.setOnAction(event -> {
+            try {
+                loginManager.signUp(user.getText(), passwordField.getText());
+            }catch (ConnectionException ignored) {}
         });
-        log.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    if (loginManager.signIn(user.getText(), passwordField.getText())) {
-                        try {
-                            primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
+        log.setOnAction(event -> {
+            try {
+                if (loginManager.signIn(user.getText(), passwordField.getText())) {
+                    try {
+                        primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                }catch (ConnectionException e) {}
-            }
+                }
+            }catch (ConnectionException ignored) {}
         });
         helpCommand.setTooltip(new Tooltip("Click the button\nto see commands help"));
-        helpCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.help();
-            }
-        });
+        helpCommand.setOnAction(event -> commandsManager.help());
         infoCommand.setTooltip(new Tooltip("Click the button\nto see info about collection"));
-        infoCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.info();
-            }
-        });
+        infoCommand.setOnAction(event -> commandsManager.info());
         printCommand.setTooltip(new Tooltip("Click the button\nto print fields ascending Location"));
-        printCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.print();
-            }
-        });
+        printCommand.setOnAction(event -> commandsManager.print());
         addCommand.setTooltip(new Tooltip("Click the button\nto add element"));
-        addCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                //commandsManager.setPersonStage();
-                commandsManager.add();
-            }
+        addCommand.setOnAction(event -> {
+            //commandsManager.setPersonStage();
+            commandsManager.add();
+//                tableView.setItems(people);
+            //people.add(new Person(3,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),140.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"));
         });
         addIfMaxCommand.setTooltip(new Tooltip("Click the button\nto add element that is more then max"));
-        addIfMaxCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.addIfMax();
-            }
-        });
+        addIfMaxCommand.setOnAction(event -> commandsManager.addIfMax());
         removeByIdCommand.setTooltip(new Tooltip("Click the button\nto remove element by id"));
-        removeByIdCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.removeById();
-            }
-        });
+        removeByIdCommand.setOnAction(event -> commandsManager.removeById());
         updateCommand.setTooltip(new Tooltip("Click the button\nto update element by id"));
-        updateCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.updateById();
-            }
-        });
+        updateCommand.setOnAction(event -> commandsManager.updateById());
         removeHeadCommand.setTooltip(new Tooltip("Click the button\nto remove first element"));
-        removeHeadCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.removeHead();
-            }
-        });
+        removeHeadCommand.setOnAction(event -> commandsManager.removeHead());
         removeGreaterCommand.setTooltip(new Tooltip("Click the button\nto remove elements that greater than it"));
-        removeGreaterCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.removeGreater();
-            }
-        });
+        removeGreaterCommand.setOnAction(event -> commandsManager.removeGreater());
         clearCommand.setTooltip(new Tooltip("Click the button\nto clear collection"));
-        clearCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.clear();
-            }
-        });
+        clearCommand.setOnAction(event -> commandsManager.clear());
         filterCommand.setTooltip(new Tooltip("Click the button\nto filter less than EyeColor"));
-        filterCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.filterEyeColor();
-            }
-        });
+        filterCommand.setOnAction(event -> commandsManager.filterEyeColor());
         countCommand.setTooltip(new Tooltip("Click the button\nto count elements with greater Location"));
-        countCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.countLocation();
-            }
-        });
+        countCommand.setOnAction(event -> commandsManager.countLocation());
         scriptCommand.setTooltip(new Tooltip("Click the button\nto execute script from file"));
-        scriptCommand.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                commandsManager.script();
-            }
-        });
+        scriptCommand.setOnAction(event -> commandsManager.script());
 
 
 
@@ -211,40 +143,40 @@ public class App extends Application {
 
     public Scene setMainWindowScene(String userName) throws ParseException {
         StackPane mainWindow = new StackPane();
-        HBox hBox = new HBox();
+        //HBox hBox = new HBox();
         Label userN = new Label(userName);
         TabPane tabPane = new TabPane();
         Tab tab =new Tab();
         tab.setText("Table");
-        TableView<Person> tableView =new TableView();
-        ObservableList<Person> people = FXCollections.observableArrayList(new Person(1,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),140.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"),
+        tableView =new TableView<>();
+        people.addAll(new Person(1,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),140.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"),
                 new Person(2,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),150.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"));
         TableColumn<Person,Integer> id = new TableColumn<>("Id");
-        id.setCellValueFactory(new PropertyValueFactory<Person,Integer>("id"));
+        id.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Person,String> name = new TableColumn<>("Name");
-        name.setCellValueFactory(new PropertyValueFactory<Person,String>("name"));
+        name.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Person,Integer> coordinateX = new TableColumn<>("CoordinateX");
-        coordinateX.setCellValueFactory(new PropertyValueFactory<Person,Integer>("coordinateX"));
+        coordinateX.setCellValueFactory(new PropertyValueFactory<>("coordinateX"));
         TableColumn<Person,Integer> coordinateY = new TableColumn<>("CoordinateY");
-        coordinateY.setCellValueFactory(new PropertyValueFactory<Person,Integer>("coordinateY"));
+        coordinateY.setCellValueFactory(new PropertyValueFactory<>("coordinateY"));
         TableColumn<Person,String> date = new TableColumn<>("Date");
-        date.setCellValueFactory(new PropertyValueFactory<Person, String>("date"));
+        date.setCellValueFactory(new PropertyValueFactory<>("date"));
         TableColumn<Person,Double> height = new TableColumn<>("Height");
-        height.setCellValueFactory(new PropertyValueFactory<Person,Double>("height"));
+        height.setCellValueFactory(new PropertyValueFactory<>("height"));
         TableColumn<Person,String> eyeColor = new TableColumn<>("EyeColor");
-        eyeColor.setCellValueFactory(new PropertyValueFactory<Person,String>("eyeColor"));
+        eyeColor.setCellValueFactory(new PropertyValueFactory<>("eyeColor"));
         TableColumn<Person,String> hairColor = new TableColumn<>("HairColor");
-        hairColor.setCellValueFactory(new PropertyValueFactory<Person,String>("hairColor"));
+        hairColor.setCellValueFactory(new PropertyValueFactory<>("hairColor"));
         TableColumn<Person,String> country = new TableColumn<>("Country");
-        country.setCellValueFactory(new PropertyValueFactory<Person,String>("nationality"));
+        country.setCellValueFactory(new PropertyValueFactory<>("nationality"));
         TableColumn<Person,Integer> locationX = new TableColumn<>("LocationX");
-        locationX.setCellValueFactory(new PropertyValueFactory<Person,Integer>("locationX"));
+        locationX.setCellValueFactory(new PropertyValueFactory<>("locationX"));
         TableColumn<Person,Double> locationY = new TableColumn<>("LocationY");
-        locationY.setCellValueFactory(new PropertyValueFactory<Person,Double>("locationY"));
+        locationY.setCellValueFactory(new PropertyValueFactory<>("locationY"));
         TableColumn<Person,Long> locationZ = new TableColumn<>("LocationZ");
-        locationZ.setCellValueFactory(new PropertyValueFactory<Person,Long>("locationZ"));
+        locationZ.setCellValueFactory(new PropertyValueFactory<>("locationZ"));
         TableColumn<Person,String> locationName = new TableColumn<>("LocationName");
-        locationName.setCellValueFactory(new PropertyValueFactory<Person,String>("locationName"));
+        locationName.setCellValueFactory(new PropertyValueFactory<>("locationName"));
         tableView.getColumns().addAll(id,name,coordinateX,coordinateY,date,height,eyeColor,hairColor,country,locationX,locationY,locationZ,locationName);
         tableView.setItems(people);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);

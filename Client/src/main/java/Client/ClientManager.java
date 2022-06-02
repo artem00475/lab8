@@ -6,7 +6,6 @@ import Requests.RecieveManager;
 import Requests.SendManager;
 import commands.*;
 import exceptions.ConnectionException;
-import javafx.scene.control.Alert;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +29,6 @@ public class ClientManager {
             new FilterLessThanEyeColorCommand(),
             new ExcecuteCommand()
     };
-    private boolean ifConsole;
     private ConsoleCommandManager clientCommandManager;
     private final Deque<String> scriptQueue = new LinkedList<>();
     private final SendManager sendManager;
@@ -117,7 +115,7 @@ public class ClientManager {
 
     public Answer scriptMode(File file) {
         clientCommandManager.getScriptManager(file);
-        ifConsole = false;
+        boolean ifConsole = false;
         int c = 0;
         while (!scriptQueue.isEmpty()) {
             String com = scriptQueue.removeFirst().toLowerCase(Locale.ROOT);
@@ -131,7 +129,7 @@ public class ClientManager {
                         if (!command.hasArgement()) {
                             request = clientCommandManager.execute(new Request(command),true);
                         } else {
-                            request =  clientCommandManager.execute(new Request(command),ifConsole);
+                            request =  clientCommandManager.execute(new Request(command), ifConsole);
                         }if (request != null) {
                             System.out.println(sendAndRecieve(request).getString());
                         }

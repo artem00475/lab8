@@ -2,8 +2,6 @@ package Application;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -19,7 +17,7 @@ import java.io.File;
 
 
 public class PersonCreatorController {
-    private Stage stage;
+    private final Stage stage;
     private Person person;
     private ColorE colorE;
     private Location location;
@@ -89,35 +87,32 @@ public class PersonCreatorController {
         vBox.setAlignment(Pos.CENTER);
         stage.setTitle("Person");
         stage.setScene(new Scene(vBox));
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText(null);
-                try {
-                    StringBuilder stringBuilder = new StringBuilder();
-                    if (nameField.getText().equals("")) {
-                        stringBuilder.append("Пустое поле Name.\n");
-                    }if (Integer.parseInt(coordinateXField.getText())>408) {
-                        stringBuilder.append("Максимальное значение поля CoordinateX 408.\n");
-                    }if (Integer.parseInt(coordinateYField.getText())<=-876) {
-                        stringBuilder.append("Минимальное значение поля CoordinateY -875.\n");
-                    }if (Double.parseDouble(heightField.getText())<=0) {
-                        stringBuilder.append("Минимальное значение поля Height 1.\n");
-                    }if (locationNameField.getText().equals("")) {
-                        stringBuilder.append("Пстое поле LocationName");
-                    }
-                    if (stringBuilder.length()==0) {
-                        person = new Person(nameField.getText(), Integer.parseInt(coordinateXField.getText()), Integer.parseInt(coordinateYField.getText()), Double.parseDouble(heightField.getText()), ColorE.valueOf(eyeColorField.getValue()), ColorH.valueOf(hairColorField.getValue()), Country.valueOf(countryField.getValue()), Integer.parseInt(locationXField.getText()), Double.parseDouble(locationYField.getText()), Long.parseLong(locationZField.getText()), locationNameField.getText());
-                        stage.close();
-                    }else {
-                        alert.setContentText(stringBuilder.toString());
-                        alert.showAndWait();
-                    }
-                }catch (NumberFormatException e) {
-                    alert.setContentText("Есть незаполненые числовые поля");
+        okButton.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            try {
+                StringBuilder stringBuilder = new StringBuilder();
+                if (nameField.getText().equals("")) {
+                    stringBuilder.append("Пустое поле Name.\n");
+                }if (Integer.parseInt(coordinateXField.getText())>408) {
+                    stringBuilder.append("Максимальное значение поля CoordinateX 408.\n");
+                }if (Integer.parseInt(coordinateYField.getText())<=-876) {
+                    stringBuilder.append("Минимальное значение поля CoordinateY -875.\n");
+                }if (Double.parseDouble(heightField.getText())<=0) {
+                    stringBuilder.append("Минимальное значение поля Height 1.\n");
+                }if (locationNameField.getText().equals("")) {
+                    stringBuilder.append("Пстое поле LocationName");
+                }
+                if (stringBuilder.length()==0) {
+                    person = new Person(nameField.getText(), Integer.parseInt(coordinateXField.getText()), Integer.parseInt(coordinateYField.getText()), Double.parseDouble(heightField.getText()), ColorE.valueOf(eyeColorField.getValue()), ColorH.valueOf(hairColorField.getValue()), Country.valueOf(countryField.getValue()), Integer.parseInt(locationXField.getText()), Double.parseDouble(locationYField.getText()), Long.parseLong(locationZField.getText()), locationNameField.getText());
+                    stage.close();
+                }else {
+                    alert.setContentText(stringBuilder.toString());
                     alert.showAndWait();
                 }
+            }catch (NumberFormatException e) {
+                alert.setContentText("Есть незаполненые числовые поля");
+                alert.showAndWait();
             }
         });
         stage.showAndWait();
@@ -137,21 +132,18 @@ public class PersonCreatorController {
         stage.setTitle("Id");
         stage.setScene(new Scene(vBox));
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText(null);
-                try {
-                    if (Integer.parseInt(idField.getText())<=0){
-                        alert.setContentText("Минимальное значение поля Id 1");
-                    }else stage.close();
-                }catch (NumberFormatException e) {
-                    alert.setContentText("Есть незаполненые числовые поля");
-                    alert.showAndWait();
-                }
+        button.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            try {
+                if (Integer.parseInt(idField.getText())<=0){
+                    alert.setContentText("Минимальное значение поля Id 1");
+                }else stage.close();
+            }catch (NumberFormatException e) {
+                alert.setContentText("Есть незаполненые числовые поля");
+                alert.showAndWait();
             }
-            });
+        });
         stage.showAndWait();
         return Integer.parseInt(idField.getText());
     }
@@ -171,19 +163,16 @@ public class PersonCreatorController {
         stage.setScene(new Scene(vBox));
         colorE = null;
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    colorE = ColorE.valueOf(eyeColorField.getValue());
-                    stage.close();
-                }catch (NullPointerException e) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setHeaderText(null);
-                    alert.setTitle("Eye Color");
-                    alert.setContentText("Не выбрано значение");
-                    alert.showAndWait();
-                }
+        button.setOnAction(event -> {
+            try {
+                colorE = ColorE.valueOf(eyeColorField.getValue());
+                stage.close();
+            }catch (NullPointerException e) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText(null);
+                alert.setTitle("Eye Color");
+                alert.setContentText("Не выбрано значение");
+                alert.showAndWait();
             }
         });
         stage.showAndWait();
@@ -217,24 +206,21 @@ public class PersonCreatorController {
         vBox.setAlignment(Pos.CENTER);
         stage.setTitle("Location");
         stage.setScene(new Scene(vBox));
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setHeaderText(null);
-                alert.setTitle("Location");
-                try {
-                    if (locationNameField.getText().equals("")) {
-                        alert.setContentText("Пстое поле LocationName");
-                        alert.showAndWait();
-                    }else {
-                        location = new Location(Integer.parseInt(locationXField.getText()), Double.parseDouble(locationYField.getText()), Long.parseLong(locationZField.getText()), locationNameField.getText());
-                        stage.close();
-                    }
-                }catch (NumberFormatException e) {
-                    alert.setContentText("Есть незаполненые числовые поля");
+        okButton.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setTitle("Location");
+            try {
+                if (locationNameField.getText().equals("")) {
+                    alert.setContentText("Пстое поле LocationName");
                     alert.showAndWait();
+                }else {
+                    location = new Location(Integer.parseInt(locationXField.getText()), Double.parseDouble(locationYField.getText()), Long.parseLong(locationZField.getText()), locationNameField.getText());
+                    stage.close();
                 }
+            }catch (NumberFormatException e) {
+                alert.setContentText("Есть незаполненые числовые поля");
+                alert.showAndWait();
             }
         });
         stage.showAndWait();

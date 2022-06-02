@@ -3,16 +3,13 @@ package Application;
 import Client.ClientManager;
 import exceptions.ConnectionException;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 
 public class LoginManager {
     private String userName;
     private String password;
-    private Alert alert;
-    private ClientManager clientManager;
-    private CommandsManager commandsManager;
+    private final Alert alert;
+    private final ClientManager clientManager;
+    private final CommandsManager commandsManager;
 
     public LoginManager (ClientManager clientManager, CommandsManager commandsManager) {
         alert = new Alert(Alert.AlertType.INFORMATION);

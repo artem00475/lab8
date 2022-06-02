@@ -13,8 +13,8 @@ import person.Person;
 import java.io.File;
 
 public class CommandsManager {
-    private ClientManager clientManager;
-    private PersonCreatorController personCreatorController;
+    private final ClientManager clientManager;
+    private final PersonCreatorController personCreatorController;
     private Person person;
     private String login;
     private String password;
@@ -118,7 +118,7 @@ public class CommandsManager {
             alert.setContentText("Try later");
             alert.showAndWait();
             throw new ConnectionException("");
-        }catch (NumberFormatException e){}
+        }catch (NumberFormatException ignored){}
     }
 
     public void updateById() {
@@ -138,7 +138,7 @@ public class CommandsManager {
             alert.setContentText("Try later");
             alert.showAndWait();
             throw new ConnectionException("");
-        }catch (NumberFormatException e){}
+        }catch (NumberFormatException ignored){}
     }
 
     public void removeHead() {
