@@ -13,8 +13,7 @@ public class Request extends Message implements Serializable {
     private String login;
     private String password;
     private boolean register=false;
-    private InetAddress inetAddress = null;
-    private int port = 0;
+    private short exit=0;
 
     public Request(Command name) {
         this.command=name;
@@ -27,11 +26,10 @@ public class Request extends Message implements Serializable {
         this.register=register;
     }
 
-    public Request(String login,String password,InetAddress inetAddress,int port) {
+    public Request(String login,String password,short exit) {
         this.login=login;
         this.password=password;
-        this.inetAddress=inetAddress;
-        this.port=port;
+        this.exit=exit;
     }
     public Request(Command name, String login, String password){
         this.login=login;
@@ -76,8 +74,6 @@ public class Request extends Message implements Serializable {
 
     public boolean isRegister() {return register;}
 
-    public InetAddress getInetAddress() {return inetAddress;}
-
-    public int getPort() {return port;}
+    public short getExit() {return  exit;}
 
 }

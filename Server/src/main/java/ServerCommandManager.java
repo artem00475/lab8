@@ -8,7 +8,6 @@ import person.Location;
 import person.Person;
 
 public class ServerCommandManager implements CommandManager {
-    private final boolean wasErrors=false;
     private final CollectionManager collectionManager;
 
     public ServerCommandManager(CollectionManager collectionManager){
@@ -19,39 +18,39 @@ public class ServerCommandManager implements CommandManager {
         Command command = request.getCommand();
         if (!command.hasArgement()) {
             if (command.getName().equals("help")) {
-                return new Answer(helpCommand(), wasErrors);
+                return helpCommand();
             } else if (command.getName().equals("info")) {
-                return new Answer(infoCommand(),wasErrors);
+                return infoCommand();
             } else if (command.getName().equals("show")) {
-                return new Answer(showCommand(),wasErrors);
+                return showCommand();
             } else if (command.getName().equals("clear")) {
-                return new Answer(clearCommand(),wasErrors);
+                return clearCommand();
             }else if (command.getName().equals("remove_head")){
-                return new Answer(removeHeadCommand(),wasErrors);
+                return removeHeadCommand();
             }else {
-                return new Answer(printFieldAscendingLocationCommand(),wasErrors);
+                return printFieldAscendingLocationCommand();
             }
         }else{
             if (command.getName().equals("add")){
-                return new Answer(addCommand((Person) request.getObject()), wasErrors);
+                return addCommand((Person) request.getObject());
             }else if (command.getName().equals("add_if_max")){
-                return new Answer(addIfMaxCommand((Person) request.getObject()), wasErrors);
+                return addIfMaxCommand((Person) request.getObject());
             }else if (command.getName().equals("remove_greater")){
-                return new Answer(removeGreaterCommand((Person) request.getObject()), wasErrors);
+                return removeGreaterCommand((Person) request.getObject());
             }else if (command.getName().equals("remove_by_id")){
-                return new Answer(removeByIdCommand(request.getId()), wasErrors);
+                return removeByIdCommand(request.getId());
             }else if (command.getName().equals("update id")){
-                return new Answer(updateCommand(request.getId(), (Person) request.getObject()), wasErrors);
+                return updateCommand(request.getId(), (Person) request.getObject());
             }else if (command.getName().equals("count_greater_than_location")){
-                return new Answer(countGreaterThanLocationCommand((Location) request.getObject()), wasErrors);
+                return countGreaterThanLocationCommand((Location) request.getObject());
             }else {
-                return new Answer(filterLessThanEyeColorCommand((ColorE) request.getObject()), wasErrors);
+                return filterLessThanEyeColorCommand((ColorE) request.getObject());
             }
         }
     }
 
-    public String helpCommand(){
-               return "help : вывести справку по доступным командам\n" +
+    public Answer helpCommand(){
+               return new Answer("help : вывести справку по доступным командам\n" +
                 "info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)\n" +
                 "show : вывести в стандартный поток вывода все элементы коллекции в строковом представлении\n" +
                 "add {element} : добавить новый элемент в коллекцию\n" +
@@ -65,17 +64,17 @@ public class ServerCommandManager implements CommandManager {
                 "remove_greater {element} : удалить из коллекции все элементы, превышающие заданный\n" +
                 "count_greater_than_location location : вывести количество элементов, значение поля location которых больше заданного\n" +
                 "filter_less_than_eye_color eyeColor : вывести элементы, значение поля eyeColor которых меньше заданного\n" +
-                "print_field_ascending_location : вывести значения поля location всех элементов в порядке возрастания\n";
+                "print_field_ascending_location : вывести значения поля location всех элементов в порядке возрастания\n",true);
     }
 
-    public String infoCommand(){
-        return  "Информация о коллекции:\n" +
+    public Answer infoCommand(){
+        return  new Answer("Информация о коллекции:\n" +
                 "Коллекция типа PriorityQueue, в которой хранятся объекты класса Person\n" +
                 "Дата инициализации: " + collectionManager.getInitDate() + "\n" +
-                "Количестов элементов: " + collectionManager.getCollection().size() + "\n";
+                "Количестов элементов: " + collectionManager.getCollection().size() + "\n",true);
     }
 
-    public synchronized String showCommand(){
+    public synchronized Answer showCommand(){
         StringBuilder stringBuilder = new StringBuilder();
         if (collectionManager.getCollection().isEmpty()) {
             stringBuilder.append("Нельзя выполнить команду show: коллекция пустая\n");
@@ -83,82 +82,82 @@ public class ServerCommandManager implements CommandManager {
             stringBuilder.append("Все элементы коллекции: \n");
             collectionManager.getCollection().forEach(person -> stringBuilder.append(person).append("\n"));
         }
-        return stringBuilder.toString();
+        return new Answer(stringBuilder.toString(),true);
     }
 
-    public synchronized String clearCommand(){
+    public synchronized Answer clearCommand(){
         if (collectionManager.getCollection().isEmpty()) {
-            return "Коллекция пуста";
+            return new Answer("Коллекция пуста",true);
         }else if (collectionManager.removeAll()) {
-            return "Из коллекции удалены все элементы, принадлежащие вам";
-        }else return "В коллекции нет элементов, принадлежащих вам";
+            return new Answer("Из коллекции удалены все элементы, принадлежащие вам",false);
+        }else return new Answer("В коллекции нет элементов, принадлежащих вам",true);
     }
 
-    public synchronized String removeHeadCommand() {
+    public synchronized Answer removeHeadCommand() {
         if (collectionManager.getCollection().isEmpty()) {
-            return "Коллекция пуста";
+            return new Answer("Коллекция пуста",true);
         } else {
             Person person = collectionManager.removeFirstElement();
             if (!(person == null)) {
-                return person.toString();
-            }else return "Нет элементов, созданных вами";
+                return new Answer(person.toString(),false);
+            }else return new Answer("Нет элементов, созданных вами",true);
         }
     }
 
-    public synchronized String printFieldAscendingLocationCommand(){
+    public synchronized Answer printFieldAscendingLocationCommand(){
         StringBuilder stringBuilder = new StringBuilder();
         if (collectionManager.getCollection().isEmpty()) {
-            return "Коллекция пуста";
+            return new Answer("Коллекция пуста",true);
         } else {collectionManager.sortByLocation().forEach(person -> stringBuilder.append(person.getLocation()).append("\n"));
-        } return stringBuilder.toString();
+        } return new Answer(stringBuilder.toString(),true);
     }
 
-    public synchronized String addCommand(Person person){
+    public synchronized Answer addCommand(Person person){
         if (collectionManager.addElement(createPerson(person))) {
-            return "Элемент успешно добавлен";
-        }else return "Объект не добавлен";
+            return new Answer("Элемент успешно добавлен",false);
+        }else return new Answer("Объект не добавлен",true);
    }
 
-   public synchronized String addIfMaxCommand(Person person){
+   public synchronized Answer addIfMaxCommand(Person person){
        if (collectionManager.ifMore(person)) {
            return addCommand(person);
        } else {
-           return "Значение элемента не превышает наибольшего элемента коллекции";
+           return new Answer("Значение элемента не превышает наибольшего элемента коллекции",true);
        }
    }
 
-   public synchronized String removeGreaterCommand(Person person){
+   public synchronized Answer removeGreaterCommand(Person person){
        if (collectionManager.removeGreater(person)){
-           return "Элементы успешно удалены";
+           return new Answer("Элементы успешно удалены",false);
        } else {
-           return "В коллекции нет элементов, удовлетворяющих условию, или они не принадлежат вам";
+           return new Answer("В коллекции нет элементов, удовлетворяющих условию, или они не принадлежат вам",true);
        }
    }
 
-   public synchronized String removeByIdCommand(int id){
+   public synchronized Answer removeByIdCommand(int id){
        if (collectionManager.removeElementByID(id)) {
-           return "Элемент успешно удалён.";
-       }else {return "Элемента с таким id нет в коллекции или он не принадлежит вам";}
+           return new Answer("Элемент успешно удалён.",false);
+       }else {return new Answer("Элемента с таким id нет в коллекции или он не принадлежит вам",true);}
    }
 
-   public synchronized String updateCommand(int id, Person person){
+   public synchronized Answer updateCommand(int id, Person person){
         if (collectionManager.updateElement(id,person)){
-            return "Элемент успешно обговлен";
+            return new Answer("Элемент успешно обновлен",false);
         }else {
-            return "Элемента с таким id нет в коллекции или он не принадлежит вам";}
+            return new Answer("Элемента с таким id нет в коллекции или он не принадлежит вам",true);}
         }
 
-   public String countGreaterThanLocationCommand(Location location){
-        return "Количество элементов, значение поля location которых больше заданного - " + collectionManager.countGreaterLocation(location);
+   public Answer countGreaterThanLocationCommand(Location location){
+        return new Answer("Количество элементов, значение поля location которых больше заданного - " + collectionManager.countGreaterLocation(location),true);
 
    }
 
-   public synchronized String filterLessThanEyeColorCommand(ColorE colorE){
+   public synchronized Answer filterLessThanEyeColorCommand(ColorE colorE){
         StringBuilder stringBuilder = new StringBuilder();
         collectionManager.filterLessThanEyeColor(colorE).forEach(person -> stringBuilder.append(person.toString()).append("\n"));
        if (stringBuilder.length()==0){
-           return "Таких элементов нет";
-       }else {return stringBuilder.toString();}
+           return new Answer("Таких элементов нет",true);
+       }else {return new Answer(stringBuilder.toString(),true);}
    }
 
    public Person createPerson(Person person){

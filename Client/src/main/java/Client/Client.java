@@ -32,6 +32,7 @@ public class Client {
         App.run(args,people);
         simpleBooleanProperty.set(false);
         tableManager.stop();
+        App.exit();
         client.close();
     }
 }

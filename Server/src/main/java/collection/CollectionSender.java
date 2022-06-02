@@ -1,6 +1,5 @@
 package collection;
 
-import Messages.Answer;
 import Messages.CollectionInfo;
 import RecievedMessages.ClientInfo;
 import person.Person;
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -26,6 +24,22 @@ public class CollectionSender {
 
     public void addClient(ClientInfo clientInfo) {
         clientInfos.add(clientInfo);
+    }
+
+    public boolean checkClient(String login) {
+        for (ClientInfo clientInfo : clientInfos) {
+            if (clientInfo.getLogin().equals(login)) {
+                return true;
+            }
+        }return false;
+    }
+
+    public void removeClient(String login) {
+        for (ClientInfo clientInfo : clientInfos) {
+            if (clientInfo.getLogin().equals(login)) {
+                clientInfos.remove(clientInfo);
+            }
+        }
     }
 
     public void sendCollection(BlockingQueue<Person> people) {

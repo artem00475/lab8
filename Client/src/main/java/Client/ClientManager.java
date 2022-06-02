@@ -59,6 +59,10 @@ public class ClientManager {
         clientCommandManager = new ConsoleCommandManager(scriptQueue,new Scanner(System.in),login,password);
     }
 
+    public void exit() {
+        sendManager.send(new Request(login,password,new Short("1")));
+    }
+
     public Answer consoleMode(Request request) {
         return sendAndRecieve(request);
 //                for (Command command : commands) {

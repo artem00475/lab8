@@ -50,7 +50,7 @@ public class LoginManager {
                 return true;
             } else {
                 alert.setTitle("Sign in");
-                alert.setContentText("Wrong login or password");
+                alert.setContentText("Wrong login or password, or user already authorized");
                 alert.showAndWait();
                 return false;
             }

@@ -119,6 +119,8 @@ public class App extends Application {
         App.launch(args);
     }
 
+    public static void exit() {clientManager.exit();}
+
     public Scene setLoginWindowScene() {
         user = new TextField();
         passwordField = new PasswordField();
