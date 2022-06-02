@@ -19,43 +19,41 @@ public class LoginManager {
     }
 
     public boolean signUp (String userName, String password) {
-        alert.setTitle("Sign up");
+        alert.setTitle("Регистрация");
         try {
             if (!clientManager.signUp(userName, password)) {
-                alert.setContentText("Sign up success");
+                alert.setContentText("Регистрация прошла успешно");
                 alert.showAndWait();
                 return true;
             } else {
-                alert.setContentText("User already exists");
+                alert.setContentText("Пользоваетль уже существует");
                 alert.showAndWait();
                 return false;
             }
         } catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText("Попробуйте позже");
             alert.showAndWait();
             throw new ConnectionException("");
         }
     }
 
     public boolean signIn(String userName, String password) {
-        alert.setTitle("Sign in");
+        alert.setTitle("Вход");
         try {
             if (!clientManager.signIn(userName,password)) {
                 this.userName = userName;
-                alert.setTitle("Sign in");
-                alert.setContentText("Sign in success");
+                alert.setContentText("Вход выполнен");
                 alert.showAndWait();
                 clientManager.setUser(userName, password);
                 commandsManager.setUser(userName, password);
                 return true;
             } else {
-                alert.setTitle("Sign in");
-                alert.setContentText("Wrong login or password, or user already authorized");
+                alert.setContentText("Неверный логин или пароль, или пользователь уже авторизован");
                 alert.showAndWait();
                 return false;
             }
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText("Попробуйте позже");
             alert.showAndWait();
             throw new ConnectionException("");
         }

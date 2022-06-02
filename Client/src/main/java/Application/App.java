@@ -26,19 +26,19 @@ import java.text.ParseException;
 public class App extends Application {
     private Button reg;
     private Button log;
-    private final Button helpCommand = new Button("Help");
-    private final Button addCommand = new Button("Add");
-    private final Button addIfMaxCommand = new Button("Add If Max");
-    private final Button clearCommand = new Button("Clear");
-    private final Button countCommand = new Button("Count Greater Than Location");
-    private final Button scriptCommand = new Button("Script");
-    private final Button filterCommand = new Button("Filter Less Than Eye Color");
-    private final Button infoCommand = new Button("Info");
-    private final Button printCommand = new Button("Print Field Ascending Location");
-    private final Button removeByIdCommand = new Button("Remove By Id");
-    private final Button removeGreaterCommand = new Button("Remove Greater");
-    private final Button removeHeadCommand = new Button("Remove Head");
-    private final Button updateCommand = new Button("Update");
+    private final Button helpCommand = new Button("Помощь");
+    private final Button addCommand = new Button("Добавить");
+    private final Button addIfMaxCommand = new Button("Добавить если максимальный");
+    private final Button clearCommand = new Button("Очистить");
+    private final Button countCommand = new Button("Количество больших чем расположение");
+    private final Button scriptCommand = new Button("Скрипт");
+    private final Button filterCommand = new Button("Отфильтровать меньшие чем цвет глаз");
+    private final Button infoCommand = new Button("Информация");
+    private final Button printCommand = new Button("Вывести поля по расположению");
+    private final Button removeByIdCommand = new Button("Удалить по id");
+    private final Button removeGreaterCommand = new Button("Удалить большие");
+    private final Button removeHeadCommand = new Button("Удалить первый");
+    private final Button updateCommand = new Button("Обновить");
     private TextField user;
     private PasswordField passwordField;
     private LoginManager loginManager;
@@ -70,7 +70,7 @@ public class App extends Application {
         PersonCreatorController personCreatorController = new PersonCreatorController(stage);
         commandsManager=new CommandsManager(clientManager, personCreatorController);
         loginManager = new LoginManager(clientManager,commandsManager);
-        primaryStage.setTitle("Login in");
+        primaryStage.setTitle("Авторизация");
         primaryStage.setScene(setLoginWindowScene());
         primaryStage.show();
 
@@ -83,6 +83,7 @@ public class App extends Application {
             try {
                 if (loginManager.signIn(user.getText(), passwordField.getText())) {
                     try {
+                        primaryStage.setTitle("Таблица и карта");
                         primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -132,20 +133,20 @@ public class App extends Application {
     public Scene setLoginWindowScene() {
         user = new TextField();
         passwordField = new PasswordField();
-        reg = new Button("Sign Up");
-        log = new Button("Sign in");
+        reg = new Button("Регистрация");
+        log = new Button("Вход");
         VBox vBox = new VBox();
         HBox hBox1 = new HBox();
-        hBox1.getChildren().addAll(new Label("UserName: "), user);
+        hBox1.getChildren().addAll(new Label("Логин: "), user);
         HBox hBox2 = new HBox();
-        hBox2.getChildren().addAll(new Label("Password: "), passwordField);
+        hBox2.getChildren().addAll(new Label("Пароль: "), passwordField);
         HBox hBox3 = new HBox();
         hBox3.getChildren().addAll(reg, log);
         hBox3.setSpacing(20);
         hBox3.setAlignment(Pos.CENTER);
         hBox2.setAlignment(Pos.CENTER);
         hBox1.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(new Label("Welcome"),hBox1, hBox2, hBox3);
+        vBox.getChildren().addAll(new Label("Добро пожаловать"),hBox1, hBox2, hBox3);
         VBox.setMargin(hBox2, new Insets(5, 0, 0, 0));
         VBox.setMargin(hBox3, new Insets(10, 0, 0, 0));
         VBox.setMargin(hBox1, new Insets(10, 0, 0, 0));
@@ -158,7 +159,7 @@ public class App extends Application {
         Label userN = new Label(userName);
         TabPane tabPane = new TabPane();
         Tab tab =new Tab();
-        tab.setText("Table");
+        tab.setText("Таблица");
         tableView =new TableView<>();
         TableColumn<Person,Integer> id = new TableColumn<>("Id");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -194,7 +195,7 @@ public class App extends Application {
         pane.setCenter(tableView);
         tab.setContent(pane);
         Tab tab1 =new Tab();
-        tab1.setText("Map");
+        tab1.setText("Карта");
         tab1.setContent(map);
         tabPane.getTabs().addAll(tab,tab1);
         ObservableList<String> language = FXCollections.observableArrayList("Русский", "Dutch", "Lietuvių", "Español");
