@@ -44,9 +44,7 @@ public class TableManager {
     public void run(SimpleBooleanProperty work) {
         while (work.get()) {
             try {
-                System.out.println("4");
                 CollectionInfo collectionInfo = (CollectionInfo) recieve();
-                System.out.println("5");
                 people.clear();
                 people.addAll(collectionInfo.getCollection());
             }catch (AsynchronousCloseException ignored) {
@@ -87,9 +85,7 @@ public class TableManager {
     public Object recieve() throws IOException, ClassNotFoundException {
         byte[] buffer = new byte[1024*1024];
         DatagramPacket datagramPacket = new DatagramPacket(buffer,buffer.length);
-        System.out.println("7");
         datagramChannel.socket().receive(datagramPacket);
-        System.out.println("6");
         byte[] bytes = datagramPacket.getData();
         return deserialize(bytes);
     }
