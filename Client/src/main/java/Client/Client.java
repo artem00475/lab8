@@ -3,6 +3,10 @@ package Client;
 import Application.App;
 import Requests.RecieveManager;
 import Requests.SendManager;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import person.Person;
 
 import java.io.IOException;
 import java.net.*;
@@ -21,8 +25,13 @@ public class Client {
         scanner = new Scanner(in);
         sendManager = new SendManager(reciever,client);
         recieveManager = new RecieveManager(client);
-        App.setRequestManagers(recieveManager,sendManager);
-        App.run(args);
+        SimpleBooleanProperty simpleBooleanProperty = new SimpleBooleanProperty(true);
+        ObservableList<Person> people = FXCollections.observableArrayList();
+        TableManager tableManager = new TableManager(simpleBooleanProperty,people);
+        App.setRequestManagers(recieveManager,sendManager,tableManager);
+        App.run(args,people);
+        simpleBooleanProperty.set(false);
+        tableManager.stop();
         client.close();
     }
 }

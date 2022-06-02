@@ -1,11 +1,14 @@
 import DataBase.DBManager;
 import Messages.Answer;
 import Messages.Request;
+import RecievedMessages.ClientInfo;
 import RecievedMessages.RecievedMessage;
 import collection.CollectionManager;
+import collection.CollectionSender;
 import exceptions.ConnectionException;
 
 import java.io.IOException;
+import java.net.DatagramSocket;
 import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -24,6 +27,8 @@ public class ServerManager {
     private Scanner scanner;
     private final Logger LOG;
     private final DBManager dbManager;
+    private final CollectionSender collectionSender;
+    private final DatagramSocket datagramSocket;
 
     public ServerManager(SendManager sendManager,RecieveManager recieveManager) throws IOException {
         this.recieveManager=recieveManager;
@@ -37,6 +42,8 @@ public class ServerManager {
         FileHandler fileHandler = new FileHandler("Application_log",true);
         fileHandler.setFormatter(new SimpleFormatter());
         LOG.addHandler(fileHandler);
+        datagramSocket = new DatagramSocket(4585);
+        collectionSender = new CollectionSender(datagramSocket);
 
     }
 
@@ -103,7 +110,9 @@ public class ServerManager {
                                                 short checkedUser = dbManager.checkUser(request.getLogin(), request.getPassword(),request.isRegister());
                                                 if (checkedUser == 1) {
                                                     LOG.info("Клиент авторизован");
+                                                    collectionSender.addClient(new ClientInfo(request.getLogin(), recievedMessage.getInetAddress(),recievedMessage.getPort()));
                                                     sendManager.sendAnswer(new Answer("Авторизация " + request.getLogin() + " выполнена", false), recievedMessage.getInetAddress(), recievedMessage.getPort());
+                                                    collectionSender.sendCollection(collectionManager.getCollection());
                                                 } else if (checkedUser == 0) {
                                                     LOG.info("Клиент зарегистрирован");
                                                     sendManager.sendAnswer(new Answer("Регистрация " + request.getLogin() + " выполнена", false), recievedMessage.getInetAddress(), recievedMessage.getPort());

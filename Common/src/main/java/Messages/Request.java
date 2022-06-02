@@ -4,6 +4,7 @@ import commands.Command;
 import commands.CommandManager;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 
 public class Request extends Message implements Serializable {
     private Command command = null;
@@ -12,6 +13,8 @@ public class Request extends Message implements Serializable {
     private String login;
     private String password;
     private boolean register=false;
+    private InetAddress inetAddress = null;
+    private int port = 0;
 
     public Request(Command name) {
         this.command=name;
@@ -22,6 +25,13 @@ public class Request extends Message implements Serializable {
         this.login=login;
         this.password=password;
         this.register=register;
+    }
+
+    public Request(String login,String password,InetAddress inetAddress,int port) {
+        this.login=login;
+        this.password=password;
+        this.inetAddress=inetAddress;
+        this.port=port;
     }
     public Request(Command name, String login, String password){
         this.login=login;
@@ -65,5 +75,9 @@ public class Request extends Message implements Serializable {
     public String getLogin() {return login;}
 
     public boolean isRegister() {return register;}
+
+    public InetAddress getInetAddress() {return inetAddress;}
+
+    public int getPort() {return port;}
 
 }

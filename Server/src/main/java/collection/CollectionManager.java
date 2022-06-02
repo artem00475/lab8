@@ -36,7 +36,7 @@ public class CollectionManager {
      * Возвращает коллекцию
      * @return коллекция
      */
-    public Queue<Person> getCollection(){
+    public BlockingQueue<Person> getCollection(){
         return collection;
     }
 

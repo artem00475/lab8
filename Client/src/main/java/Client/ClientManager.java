@@ -35,15 +35,23 @@ public class ClientManager {
     private final RecieveManager recieveManager;
     private String login;
     private String password;
+    private TableManager tableManager;
 
-    public ClientManager( SendManager sendManager, RecieveManager recieveManager) {
+    public ClientManager( SendManager sendManager, RecieveManager recieveManager, TableManager tableManager) {
         this.sendManager=sendManager;
         this.recieveManager=recieveManager;
+        this.tableManager=tableManager;
     }
 
     public boolean signUp (String login, String password) {return sendAndRecieve(new Request(login, password,true)).getErrors();}
 
-    public boolean signIn (String login, String password) {return sendAndRecieve(new Request(login, password,false)).getErrors();}
+    public boolean signIn (String login, String password) {
+        boolean error = sendAndRecieve1(new Request(login, password, false)).getErrors();
+        if (!error) {
+            tableManager.chahgeAdres();
+            tableManager.begin();
+        }
+        return error;}
 
     public void setUser(String login,String password) {
         this.login=login;
@@ -149,6 +157,24 @@ public class ClientManager {
                 sendManager.send(request);
                 System.out.println(recieveManager.recieve().getString());
                 return recieveManager.recieve();
+            }catch (IOException | ClassNotFoundException exception){
+                throw new ConnectionException("Сервер не отвечает");
+            }
+        } catch (IOException | ClassNotFoundException e){
+            throw new ConnectionException("Что-то пошло не так");
+        }
+    }
+
+    public Answer sendAndRecieve1(Request request){
+        try {
+            tableManager.send(request);
+            return (Answer) tableManager.recieve();
+        }catch (SocketTimeoutException e) {
+            System.out.println("Сервер не отвечает, повторная попытка получения ответа...");
+            try {
+                tableManager.send(request);
+                System.out.println(recieveManager.recieve().getString());
+                return (Answer) tableManager.recieve();
             }catch (IOException | ClassNotFoundException exception){
                 throw new ConnectionException("Сервер не отвечает");
             }

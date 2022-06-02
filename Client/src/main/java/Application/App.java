@@ -1,6 +1,7 @@
 package Application;
 
 import Client.ClientManager;
+import Client.TableManager;
 import Requests.RecieveManager;
 import Requests.SendManager;
 import exceptions.ConnectionException;
@@ -42,10 +43,10 @@ public class App extends Application {
     private static ClientManager clientManager;
     private CommandsManager commandsManager;
     private TableView<Person> tableView;
-    private ObservableList<Person> people = FXCollections.observableArrayList();
+    private static ObservableList<Person> people;
 
-    public static void setRequestManagers(RecieveManager recieveManager, SendManager sendManager) {
-        clientManager = new ClientManager(sendManager,recieveManager);
+    public static void setRequestManagers(RecieveManager recieveManager, SendManager sendManager, TableManager tableManager) {
+        clientManager = new ClientManager(sendManager,recieveManager,tableManager);
     }
 
     @Override
@@ -113,7 +114,8 @@ public class App extends Application {
 
     }
 
-    public static void run(String[] args) {
+    public static void run(String[] args, ObservableList<Person> people) {
+        App.people=people;
         App.launch(args);
     }
 
@@ -149,8 +151,8 @@ public class App extends Application {
         Tab tab =new Tab();
         tab.setText("Table");
         tableView =new TableView<>();
-        people.addAll(new Person(1,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),140.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"),
-                new Person(2,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),150.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"));
+        //people.addAll(new Person(1,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),140.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"),
+                //new Person(2,"artem",10,10, new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").parse("12:23:46 24.03.2022"),150.0, ColorE.BROWN, ColorH.BLACK, Country.INDIA,10,10.0,Long.parseLong("10"),"1231"));
         TableColumn<Person,Integer> id = new TableColumn<>("Id");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Person,String> name = new TableColumn<>("Name");
