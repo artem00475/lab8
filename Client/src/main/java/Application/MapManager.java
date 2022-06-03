@@ -125,7 +125,6 @@ public class MapManager {
                 textMap.put(person.getID(),text);
                 group.getChildren().add(circle);
                 group.getChildren().add(text);
-                //circles.add(label);
         }
     }
 

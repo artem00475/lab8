@@ -1,5 +1,6 @@
 package Application;
 
+import Language.Languages;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -93,15 +94,15 @@ public class PersonCreatorController {
             try {
                 StringBuilder stringBuilder = new StringBuilder();
                 if (nameField.getText().equals("")) {
-                    stringBuilder.append("Пустое поле Name.\n");
+                    stringBuilder.append(Languages.getString("emptyName").get() +"\n");
                 }if (Integer.parseInt(coordinateXField.getText())>408) {
-                    stringBuilder.append("Максимальное значение поля CoordinateX 408.\n");
+                    stringBuilder.append(Languages.getString("coordinateXError").get()+"\n");
                 }if (Integer.parseInt(coordinateYField.getText())<=-876) {
-                    stringBuilder.append("Минимальное значение поля CoordinateY -875.\n");
+                    stringBuilder.append(Languages.getString("coordinateYError").get()+"\n");
                 }if (Double.parseDouble(heightField.getText())<=0) {
-                    stringBuilder.append("Минимальное значение поля Height 1.\n");
+                    stringBuilder.append(Languages.getString("heightError").get()+"\n");
                 }if (locationNameField.getText().equals("")) {
-                    stringBuilder.append("Пстое поле LocationName");
+                    stringBuilder.append(Languages.getString("emptyLocationName").get());
                 }
                 if (stringBuilder.length()==0) {
                     person = new Person(nameField.getText(), Integer.parseInt(coordinateXField.getText()), Integer.parseInt(coordinateYField.getText()), Double.parseDouble(heightField.getText()), ColorE.valueOf(eyeColorField.getValue()), ColorH.valueOf(hairColorField.getValue()), Country.valueOf(countryField.getValue()), Integer.parseInt(locationXField.getText()), Double.parseDouble(locationYField.getText()), Long.parseLong(locationZField.getText()), locationNameField.getText());
@@ -111,7 +112,7 @@ public class PersonCreatorController {
                     alert.showAndWait();
                 }
             }catch (NumberFormatException e) {
-                alert.setContentText("Есть незаполненые числовые поля");
+                alert.setContentText(Languages.getString("numberFormatError").get());
                 alert.showAndWait();
             }
         });
@@ -137,10 +138,10 @@ public class PersonCreatorController {
             alert.setHeaderText(null);
             try {
                 if (Integer.parseInt(idField.getText())<=0){
-                    alert.setContentText("Минимальное значение поля Id 1");
+                    alert.setContentText(Languages.getString("idError").get());
                 }else stage.close();
             }catch (NumberFormatException e) {
-                alert.setContentText("Есть незаполненые числовые поля");
+                alert.setContentText(Languages.getString("numberFormatError").get());
                 alert.showAndWait();
             }
         });
@@ -171,7 +172,7 @@ public class PersonCreatorController {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setHeaderText(null);
                 alert.setTitle("Eye Color");
-                alert.setContentText("Не выбрано значение");
+                alert.setContentText(Languages.getString("colorError").get());
                 alert.showAndWait();
             }
         });
@@ -212,14 +213,14 @@ public class PersonCreatorController {
             alert.setTitle("Location");
             try {
                 if (locationNameField.getText().equals("")) {
-                    alert.setContentText("Пстое поле LocationName");
+                    alert.setContentText(Languages.getString("emptyLocationName").get());
                     alert.showAndWait();
                 }else {
                     location = new Location(Integer.parseInt(locationXField.getText()), Double.parseDouble(locationYField.getText()), Long.parseLong(locationZField.getText()), locationNameField.getText());
                     stage.close();
                 }
             }catch (NumberFormatException e) {
-                alert.setContentText("Есть незаполненые числовые поля");
+                alert.setContentText(Languages.getString("numberFormatError").get());
                 alert.showAndWait();
             }
         });
