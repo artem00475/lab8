@@ -30,6 +30,10 @@ public class Languages {
             }
             @Override
             protected String computeValue() {
+
+                if (getResources().getLocale().getLanguage().equals("ru")){
+                    return new String(getResources().getString(string).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+                }
                 return getResources().getString(string);
             }
         };
