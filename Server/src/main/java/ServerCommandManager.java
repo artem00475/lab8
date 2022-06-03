@@ -7,6 +7,9 @@ import person.ColorE;
 import person.Location;
 import person.Person;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
+
 public class ServerCommandManager implements CommandManager {
     private final CollectionManager collectionManager;
 
@@ -86,10 +89,13 @@ public class ServerCommandManager implements CommandManager {
     }
 
     public synchronized Answer clearCommand(){
+        BlockingQueue<Person> people = new PriorityBlockingQueue<>();
+        people.addAll(collectionManager.getCollection());
         if (collectionManager.getCollection().isEmpty()) {
             return new Answer("Коллекция пуста",true);
         }else if (collectionManager.removeAll()) {
-            return new Answer("Из коллекции удалены все элементы, принадлежащие вам",false);
+            people.removeAll(collectionManager.getCollection());
+            return new Answer("Из коллекции удалены все элементы, принадлежащие вам",false,people);
         }else return new Answer("В коллекции нет элементов, принадлежащих вам",true);
     }
 
@@ -97,9 +103,12 @@ public class ServerCommandManager implements CommandManager {
         if (collectionManager.getCollection().isEmpty()) {
             return new Answer("Коллекция пуста",true);
         } else {
+            BlockingQueue<Person> people = new PriorityBlockingQueue<>();
+            people.addAll(collectionManager.getCollection());
             Person person = collectionManager.removeFirstElement();
             if (!(person == null)) {
-                return new Answer(person.toString(),false);
+                people.removeAll(collectionManager.getCollection());
+                return new Answer(person.toString(),false,people);
             }else return new Answer("Нет элементов, созданных вами",true);
         }
     }
@@ -113,8 +122,13 @@ public class ServerCommandManager implements CommandManager {
     }
 
     public synchronized Answer addCommand(Person person){
+        BlockingQueue<Person> people = new PriorityBlockingQueue<>();
+        people.addAll(collectionManager.getCollection());
         if (collectionManager.addElement(createPerson(person))) {
-            return new Answer("Элемент успешно добавлен",false);
+            BlockingQueue<Person> people1 = new PriorityBlockingQueue<>();
+            people1.addAll(collectionManager.getCollection());
+            people1.removeAll(people);
+            return new Answer("Элемент успешно добавлен",false,people1);
         }else return new Answer("Объект не добавлен",true);
    }
 
@@ -127,22 +141,32 @@ public class ServerCommandManager implements CommandManager {
    }
 
    public synchronized Answer removeGreaterCommand(Person person){
+        BlockingQueue<Person> people = new PriorityBlockingQueue<>();
+        people.addAll(collectionManager.getCollection());
        if (collectionManager.removeGreater(person)){
-           return new Answer("Элементы успешно удалены",false);
+           people.removeAll(collectionManager.getCollection());
+           return new Answer("Элементы успешно удалены",false,people);
        } else {
            return new Answer("В коллекции нет элементов, удовлетворяющих условию, или они не принадлежат вам",true);
        }
    }
 
    public synchronized Answer removeByIdCommand(int id){
+        BlockingQueue<Person> people = new PriorityBlockingQueue<>();
+        people.addAll(collectionManager.getCollection());
        if (collectionManager.removeElementByID(id)) {
-           return new Answer("Элемент успешно удалён.",false);
+           people.removeAll(collectionManager.getCollection());
+           return new Answer("Элемент успешно удалён.",false,people);
        }else {return new Answer("Элемента с таким id нет в коллекции или он не принадлежит вам",true);}
    }
 
    public synchronized Answer updateCommand(int id, Person person){
         if (collectionManager.updateElement(id,person)){
-            return new Answer("Элемент успешно обновлен",false);
+            BlockingQueue<Person> people = new PriorityBlockingQueue<>();
+            collectionManager.getCollection().stream().forEach(person1 -> {
+                if (person1.getID()==id) people.add(person1);
+            });
+            return new Answer("Элемент успешно обновлен",false,people);
         }else {
             return new Answer("Элемента с таким id нет в коллекции или он не принадлежит вам",true);}
         }

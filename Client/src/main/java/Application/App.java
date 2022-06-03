@@ -7,16 +7,13 @@ import Requests.SendManager;
 import exceptions.ConnectionException;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import person.*;
 
@@ -46,26 +43,19 @@ public class App extends Application {
     private CommandsManager commandsManager;
     private TableView<Person> tableView;
     private static ObservableList<Person> people;
-    private Group map;
-    private static ObservableList<Circle> circles;
+    private AnchorPane map;
 
     public static void setRequestManagers(RecieveManager recieveManager, SendManager sendManager, TableManager tableManager) {
         clientManager = new ClientManager(sendManager,recieveManager,tableManager);
     }
 
 
+
+
     @Override
     public void start(Stage primaryStage) {
-        map = new Group();
-        circles = FXCollections.observableArrayList();
-        MapManager.setCircles(circles);
-        circles.addListener(new ListChangeListener<Circle>() {
-            @Override
-            public void onChanged(Change<? extends Circle> c) {
-                map.getChildren().clear();
-                map.getChildren().addAll(circles);
-            }
-        });
+        map = new AnchorPane();
+        MapManager.setCircles(map);
         Stage stage =new Stage();
         PersonCreatorController personCreatorController = new PersonCreatorController(stage);
         commandsManager=new CommandsManager(clientManager, personCreatorController);

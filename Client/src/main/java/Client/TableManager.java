@@ -3,6 +3,8 @@ package Client;
 import Application.MapManager;
 import Messages.CollectionInfo;
 import Messages.Request;
+import Messages.StatusInfo;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import person.Person;
@@ -13,6 +15,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousCloseException;
 import java.nio.channels.DatagramChannel;
+import java.util.ConcurrentModificationException;
 
 public class TableManager {
     private DatagramChannel datagramChannel;
@@ -48,11 +51,26 @@ public class TableManager {
         while (work.get()) {
             try {
                 CollectionInfo collectionInfo = (CollectionInfo) recieve();
-                people.clear();
-                people.addAll(collectionInfo.getCollection());
-                MapManager.drawPersons(collectionInfo.getCollection());
-            }catch (AsynchronousCloseException ignored) {
-            } catch (IOException e) {
+                if (collectionInfo.getStatusInfo() == StatusInfo.ADD) {
+                    people.addAll(collectionInfo.getCollection());
+                    Platform.runLater(() -> MapManager.drawPersons(collectionInfo.getCollection()));
+                } else if (collectionInfo.getStatusInfo() == StatusInfo.REMOVE) {
+                    Platform.runLater(() -> MapManager.removeCircle(collectionInfo.getCollection()));
+                    collectionInfo.getCollection().stream().forEach(person -> people.stream().forEach(person1 -> {
+                        if (person.getID() == person1.getID()) people.remove(person1);
+                    }));
+                } else {
+                    Platform.runLater(() -> MapManager.updateCircle(collectionInfo.getCollection()));
+                    collectionInfo.getCollection().stream().forEach(person -> people.stream().forEach(person1 -> {
+                        if (person.getID()==person1.getID()) {
+                            people.remove(person1);
+                            people.add(person);
+                        }
+                    }));
+                }
+            } catch (AsynchronousCloseException ignored) {
+            }catch (ConcurrentModificationException ignored){
+            }catch (IOException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();

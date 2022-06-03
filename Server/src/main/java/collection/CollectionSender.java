@@ -1,6 +1,7 @@
 package collection;
 
 import Messages.CollectionInfo;
+import Messages.StatusInfo;
 import RecievedMessages.ClientInfo;
 import person.Person;
 
@@ -42,10 +43,10 @@ public class CollectionSender {
         }
     }
 
-    public void sendCollection(BlockingQueue<Person> people) {
+    public void sendCollection(BlockingQueue<Person> people, StatusInfo statusInfo) {
         try {
             for (ClientInfo clientInfo : clientInfos) {
-                byte[] buffer = serialize(new CollectionInfo(people));
+                byte[] buffer = serialize(new CollectionInfo(people,statusInfo));
                 DatagramPacket output = new DatagramPacket(buffer, buffer.length, clientInfo.getInetAddress(),clientInfo.getPort());
                 datagramSocket.send(output);
             }

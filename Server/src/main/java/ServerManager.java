@@ -1,6 +1,7 @@
 import DataBase.DBManager;
 import Messages.Answer;
 import Messages.Request;
+import Messages.StatusInfo;
 import RecievedMessages.ClientInfo;
 import RecievedMessages.RecievedMessage;
 import collection.CollectionManager;
@@ -115,7 +116,7 @@ public class ServerManager {
                                                             LOG.info("Клиент авторизован");
                                                             collectionSender.addClient(new ClientInfo(request.getLogin(), recievedMessage.getInetAddress(), recievedMessage.getPort()));
                                                             sendManager.sendAnswer(new Answer("Авторизация " + request.getLogin() + " выполнена", false), recievedMessage.getInetAddress(), recievedMessage.getPort());
-                                                            collectionSender.sendCollection(collectionManager.getCollection());
+                                                            collectionSender.sendCollection(collectionManager.getCollection(), StatusInfo.ADD);
                                                         }else {
                                                             LOG.info("Получен запрос на авторизацию от клиента " + request.getLogin());
                                                             LOG.info("Клиент "+request.getLogin()+" уже авторизован");
@@ -142,7 +143,15 @@ public class ServerManager {
                                                 if (dbManager.checkUser(request.getLogin(), request.getPassword(),request.isRegister()) == 1) {
                                                     LOG.log(Level.INFO, "Получен запрос на выполнение команды " + request.getCommand().getName() + " от клиента " + request.getLogin());
                                                     Answer answer = serverCommandManager.execute(request, true);
-                                                    if (!answer.getErrors()) collectionSender.sendCollection(collectionManager.getCollection());
+                                                    if (!answer.getErrors()) {
+                                                        if (request.getCommand().getName().equals("add") || request.getCommand().getName().equals("add")) {
+                                                            collectionSender.sendCollection(answer.getPeople(), StatusInfo.ADD);
+                                                        }else if(request.getCommand().getName().equals("update id")) {
+                                                            collectionSender.sendCollection(answer.getPeople(), StatusInfo.UPDATE);
+                                                        }else if (request.getCommand().getName().equals("remove_by_id") || request.getCommand().getName().equals("remove_head") || request.getCommand().getName().equals("remove_greater") || request.getCommand().getName().equals("clear")) {
+                                                            collectionSender.sendCollection(answer.getPeople(), StatusInfo.REMOVE);
+                                                        }
+                                                    }
                                                     sendManager.sendAnswer(answer, recievedMessage.getInetAddress(), recievedMessage.getPort());
                                                     LOG.log(Level.INFO, "Команда " + request.getCommand().getName() + " выполнена и ответ отправлен клиенту " + request.getLogin());
                                                 } else {
