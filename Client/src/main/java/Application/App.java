@@ -2,10 +2,12 @@ package Application;
 
 import Client.ClientManager;
 import Client.TableManager;
+import Language.Languages;
 import Requests.RecieveManager;
 import Requests.SendManager;
 import exceptions.ConnectionException;
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,6 +20,8 @@ import javafx.stage.Stage;
 import person.*;
 
 import java.text.ParseException;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 
 public class App extends Application {
@@ -44,6 +48,7 @@ public class App extends Application {
     private TableView<Person> tableView;
     private static ObservableList<Person> people;
     private AnchorPane map;
+    private SimpleStringProperty table = new SimpleStringProperty("Таблица");
 
     public static void setRequestManagers(RecieveManager recieveManager, SendManager sendManager, TableManager tableManager) {
         clientManager = new ClientManager(sendManager,recieveManager,tableManager);
@@ -54,6 +59,21 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        Languages.setResources(ResourceBundle.getBundle("resources",new Locale("ru","RU")));
+        helpCommand.textProperty().bind(Languages.getString("helpCommand"));
+        addCommand.textProperty().bind(Languages.getString("addCommand"));
+        addIfMaxCommand.textProperty().bind(Languages.getString("addIfMaxCommand"));
+        clearCommand.textProperty().bind(Languages.getString("clearCommand"));
+        countCommand.textProperty().bind(Languages.getString("countCommand"));
+        scriptCommand.textProperty().bind(Languages.getString("scriptCommand"));
+        filterCommand.textProperty().bind(Languages.getString("filterCommand"));
+        infoCommand.textProperty().bind(Languages.getString("infoCommand"));
+        printCommand.textProperty().bind(Languages.getString("printCommand"));
+        removeByIdCommand.textProperty().bind(Languages.getString("removeByIdCommand"));
+        removeGreaterCommand.textProperty().bind(Languages.getString("removeGreaterCommand"));
+        removeHeadCommand.textProperty().bind(Languages.getString("removeHeadCommand"));
+        updateCommand.textProperty().bind(Languages.getString("updateCommand"));
+
         map = new AnchorPane();
         MapManager.setCircles(map);
         Stage stage =new Stage();
@@ -81,6 +101,7 @@ public class App extends Application {
                     if (loginManager.signIn(login, pass)) {
                         try {
                             primaryStage.setTitle("Таблица и карта");
+                            primaryStage.titleProperty().bind(Languages.getString("title"));
                             primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
                         } catch (ParseException e) {
                             e.printStackTrace();
@@ -157,7 +178,7 @@ public class App extends Application {
         Label userN = new Label(userName);
         TabPane tabPane = new TabPane();
         Tab tab =new Tab();
-        tab.setText("Таблица");
+        tab.textProperty().bind(Languages.getString("table"));
         tableView =new TableView<>();
         TableColumn<Person,Integer> id = new TableColumn<>("Id");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -195,11 +216,21 @@ public class App extends Application {
         pane.setCenter(tableView);
         tab.setContent(pane);
         Tab tab1 =new Tab();
-        tab1.setText("Карта");
+        tab1.textProperty().bind(Languages.getString("map"));
         tab1.setContent(map);
         tabPane.getTabs().addAll(tab,tab1);
         ObservableList<String> language = FXCollections.observableArrayList("Русский", "Dutch", "Lietuvių", "Español");
         ComboBox<String> languageField = new ComboBox<>(language);
+        languageField.setOnAction(event -> {
+            if (languageField.getValue().equals("Русский")) {
+                Languages.setResources(ResourceBundle.getBundle("resources",new Locale("ru","RU")));
+            }else if (languageField.getValue().equals("Dutch")) {
+                Languages.setResources(ResourceBundle.getBundle("resources", new Locale("en", "US")));
+            }
+//            }else if (languageField.getValue().equals("Lietuvių")){
+//                Languages.setBundle(new Locale("lt","LT"));
+//            }else Languages.setBundle(new Locale("es","ES"));
+        });
         languageField.setValue("Русский");
         mainWindow.getChildren().addAll(tabPane,userN,languageField);
         StackPane.setMargin(userN,new Insets(5,0,0,0));

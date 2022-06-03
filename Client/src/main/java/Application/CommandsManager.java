@@ -1,6 +1,7 @@
 package Application;
 
 import Client.ClientManager;
+import Language.Languages;
 import Messages.Answer;
 import Messages.Request;
 import commands.*;
@@ -33,11 +34,11 @@ public class CommandsManager {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         try {
-            alert.setTitle("Help");
+            alert.setTitle(Languages.getString("helpCommand").get());
             alert.setContentText(clientManager.consoleMode(new Request(new HelpCommand(),login,password)).getString());
             alert.showAndWait();
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }
@@ -47,11 +48,11 @@ public class CommandsManager {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         try {
-            alert.setTitle("Info");
+            alert.setTitle(Languages.getString("infoCommand").get());
             alert.setContentText(clientManager.consoleMode(new Request(new InfoCommand(),login,password)).getString());
             alert.showAndWait();
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }
@@ -61,11 +62,11 @@ public class CommandsManager {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         try {
-            alert.setTitle("Print field ascending location");
+            alert.setTitle(Languages.getString("printCommand").get());
             alert.setContentText(clientManager.consoleMode(new Request(new PrintFieldAscendingLocationCommand(),login,password)).getString());
             alert.showAndWait();
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }
@@ -77,13 +78,13 @@ public class CommandsManager {
         try {
             person=personCreatorController.getPerson();
             if (person!=null) {
-                alert.setTitle("Add");
+                alert.setTitle(Languages.getString("addCommand").get());
                 alert.setContentText(clientManager.consoleMode(new Request(new AddCommand(), person, login, password)).getString());
                 alert.showAndWait();
                 person=null;
             }
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }
@@ -95,13 +96,13 @@ public class CommandsManager {
         try {
             person=personCreatorController.getPerson();
             if (person!=null) {
-                alert.setTitle("Add If Max");
+                alert.setTitle(Languages.getString("addIfMaxCommand").get());
                 alert.setContentText(clientManager.consoleMode(new Request(new AddIfMaxCommand(), person, login, password)).getString());
                 alert.showAndWait();
                 person=null;
             }
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }
@@ -111,11 +112,11 @@ public class CommandsManager {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         try {
-            alert.setTitle("Remove by id");
+            alert.setTitle(Languages.getString("removeByIdCommand").get());
             alert.setContentText(clientManager.consoleMode(new Request(new RemoveByIdCommand(),personCreatorController.getId(),login,password)).getString());
             alert.showAndWait();
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }catch (NumberFormatException ignored){}
@@ -126,7 +127,7 @@ public class CommandsManager {
         alert.setHeaderText(null);
         int id;
         try {
-            alert.setTitle("Update");
+            alert.setTitle(Languages.getString("updateCommand").get());
             id = personCreatorController.getId();
             person=personCreatorController.getPerson();
             if (person!=null) {
@@ -135,7 +136,7 @@ public class CommandsManager {
                 person=null;
             }
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }catch (NumberFormatException ignored){}
@@ -145,11 +146,11 @@ public class CommandsManager {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         try {
-            alert.setTitle("Remove head");
+            alert.setTitle(Languages.getString("removeHeadCommand").get());
             alert.setContentText(clientManager.consoleMode(new Request(new RemoveHeadCommand(),login,password)).getString());
             alert.showAndWait();
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }
@@ -161,13 +162,13 @@ public class CommandsManager {
         try {
             person=personCreatorController.getPerson();
             if (person!=null) {
-                alert.setTitle("Remove Greater");
+                alert.setTitle(Languages.getString("removeGreaterCommand").get());
                 alert.setContentText(clientManager.consoleMode(new Request(new RemoveGreaterCommand(), person, login, password)).getString());
                 alert.showAndWait();
                 person=null;
             }
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }
@@ -177,11 +178,11 @@ public class CommandsManager {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         try {
-            alert.setTitle("Clear");
+            alert.setTitle(Languages.getString("clearCommand").get());
             alert.setContentText(clientManager.consoleMode(new Request(new ClearCommand(),login,password)).getString());
             alert.showAndWait();
         }catch (ConnectionException e) {
-            alert.setContentText("Try later");
+            alert.setContentText(Languages.getString("connection").get());
             alert.showAndWait();
             throw new ConnectionException("");
         }
@@ -193,11 +194,11 @@ public class CommandsManager {
         ColorE colorE = personCreatorController.getEyeColor();
         if (colorE!=null) {
             try {
-                alert.setTitle("Filter less than eye color");
+                alert.setTitle(Languages.getString("filterCommand").get());
                 alert.setContentText(clientManager.consoleMode(new Request(new FilterLessThanEyeColorCommand(), colorE, login, password)).getString());
                 alert.showAndWait();
             } catch (ConnectionException e) {
-                alert.setContentText("Try later");
+                alert.setContentText(Languages.getString("connection").get());
                 alert.showAndWait();
                 throw new ConnectionException("");
             }
@@ -210,11 +211,11 @@ public class CommandsManager {
         Location location = personCreatorController.getLocation();
         if (location!=null) {
             try {
-                alert.setTitle("Count greater than location");
+                alert.setTitle(Languages.getString("countCommand").get());
                 alert.setContentText(clientManager.consoleMode(new Request(new CountGreaterThanLocationCommand(),location , login, password)).getString());
                 alert.showAndWait();
             } catch (ConnectionException e) {
-                alert.setContentText("Try later");
+                alert.setContentText(Languages.getString("connection").get());
                 alert.showAndWait();
                 throw new ConnectionException("");
             }
@@ -224,17 +225,17 @@ public class CommandsManager {
     public void script() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
-        alert.setTitle("Script");
+        alert.setTitle(Languages.getString("scriptCommand").get());
         File file = personCreatorController.getFile();
         if (file!=null) {
             try {
                 Answer answer = clientManager.scriptMode(file);
                 if (answer!=null) {
                     alert.setContentText(answer.getString());
-                }else alert.setContentText("Скрипт не найден");
+                }else alert.setContentText(Languages.getString("scriptError").get());
                 alert.showAndWait();
             }catch (ConnectionException e) {
-                alert.setContentText("Try later");
+                alert.setContentText(Languages.getString("connection").get());
                 alert.showAndWait();
                 throw new ConnectionException("");
             }
