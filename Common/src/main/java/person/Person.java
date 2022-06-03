@@ -24,6 +24,7 @@ public class Person implements Serializable,Comparable<Person> {
     private Location location; //Поле может быть null
     private static final LinkedList<Integer> idArray = new LinkedList<>();
     private String user=null;
+    private static String pattern = "HH:mm:ss dd.MM.yyyy";
 
 
     /**
@@ -141,7 +142,9 @@ public class Person implements Serializable,Comparable<Person> {
 
     public Integer getCoordinateY() {return coordinates.getY();}
 
-    public String getDate() {return new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(creationDate);}
+    public String getDate() {return new SimpleDateFormat(Person.pattern).format(creationDate);}
+
+    public static void setPattern(String pattern) {Person.pattern=pattern;}
 
     /**
      * Возвращает рост человека

@@ -266,11 +266,21 @@ public class App extends Application {
         languageField.setOnAction(event -> {
             if (languageField.getValue().equals("Русский")) {
                 Languages.setResources(ResourceBundle.getBundle("resources",new Locale("ru","RU")));
+                Person.setPattern("HH:mm:ss dd.MM.yyyy");
+                people.add(null);
             }else if (languageField.getValue().equals("Dutch")) {
                 Languages.setResources(ResourceBundle.getBundle("resources", new Locale("nl", "NL")));
+                Person.setPattern("HH:mm:ss dd-MM-yyyy");
+                people.add(null);
             }else if (languageField.getValue().equals("Lietuvių")){
                 Languages.setResources(ResourceBundle.getBundle("resources",new Locale("LT","LT")));
-            }else Languages.setResources(ResourceBundle.getBundle("resources",new Locale("es","CO")));
+                Person.setPattern("HH:mm:ss dd.MM.yyyy");
+                people.add(null);
+            }else {
+                Languages.setResources(ResourceBundle.getBundle("resources",new Locale("es","CO")));
+                Person.setPattern("HH:mm:ss dd/MM/yyyy");
+                people.add(null);
+            }
         });
         languageField.setValue("Русский");
         mainWindow.getChildren().addAll(tabPane,userN,languageField);

@@ -89,22 +89,22 @@ public class MapManager {
                     transition.play();
                 }
             });
-            Tooltip tooltip = new Tooltip();
-            tooltip.setText("Id: " + person.getID()+"\n"+
-                    "Name: " + person.getName()+"\n"+
-                    "CoordinateX: " + person.getCoordinateX()+"\n"+
-                    "CoordinateY: " + person.getCoordinateY()+"\n"+
-                    "Date: " + person.getDate()+"\n"+
-                    "Height: " + person.getHeight()+"\n"+
-                    "EyeColor: " + person.getEyeColor().name()+"\n"+
-                    "HairColor: " + person.getHairColor().name()+"\n"+
-                    "Country: " + person.getNationality().name()+"\n"+
-                    "LocationX: " + person.getLocationX()+"\n"+
-                    "LocationY: " + person.getLocationY()+"\n"+
-                    "LocationZ: " + person.getLocationZ()+"\n"+
-                    "LocationName: " + person.getLocationName()+"\n"+
-                    "User: " + person.getUser());
-            Tooltip.install(circle,tooltip);
+//            Tooltip tooltip = new Tooltip();
+//            tooltip.setText("Id: " + person.getID()+"\n"+
+//                    "Name: " + person.getName()+"\n"+
+//                    "CoordinateX: " + person.getCoordinateX()+"\n"+
+//                    "CoordinateY: " + person.getCoordinateY()+"\n"+
+//                    "Date: " + person.getDate()+"\n"+
+//                    "Height: " + person.getHeight()+"\n"+
+//                    "EyeColor: " + person.getEyeColor().name()+"\n"+
+//                    "HairColor: " + person.getHairColor().name()+"\n"+
+//                    "Country: " + person.getNationality().name()+"\n"+
+//                    "LocationX: " + person.getLocationX()+"\n"+
+//                    "LocationY: " + person.getLocationY()+"\n"+
+//                    "LocationZ: " + person.getLocationZ()+"\n"+
+//                    "LocationName: " + person.getLocationName()+"\n"+
+//                    "User: " + person.getUser());
+//            Tooltip.install(circle,tooltip);
                 circle.setOnMouseClicked(event -> {
                     Stage stage = new Stage();
                     VBox vBox = new VBox();
