@@ -76,17 +76,25 @@ public class App extends Application {
 
         reg.setOnAction(event -> {
             try {
-                loginManager.signUp(user.getText(), passwordField.getText());
+                String login = user.getText();
+                String pass = passwordField.getText();
+                if (!login.equals("") & !pass.equals("")) {
+                    loginManager.signUp(login,pass);
+                }
             }catch (ConnectionException ignored) {}
         });
         log.setOnAction(event -> {
             try {
-                if (loginManager.signIn(user.getText(), passwordField.getText())) {
-                    try {
-                        primaryStage.setTitle("Таблица и карта");
-                        primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                String login = user.getText();
+                String pass = passwordField.getText();
+                if (!login.equals("") & !pass.equals("")) {
+                    if (loginManager.signIn(login, pass)) {
+                        try {
+                            primaryStage.setTitle("Таблица и карта");
+                            primaryStage.setScene(setMainWindowScene(loginManager.getUserName()));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }catch (ConnectionException ignored) {}
@@ -187,7 +195,9 @@ public class App extends Application {
         locationZ.setCellValueFactory(new PropertyValueFactory<>("locationZ"));
         TableColumn<Person,String> locationName = new TableColumn<>("LocationName");
         locationName.setCellValueFactory(new PropertyValueFactory<>("locationName"));
-        tableView.getColumns().addAll(id,name,coordinateX,coordinateY,date,height,eyeColor,hairColor,country,locationX,locationY,locationZ,locationName);
+        TableColumn<Person,String> user = new TableColumn<>("User");
+        user.setCellValueFactory(new PropertyValueFactory<>("user"));
+        tableView.getColumns().addAll(id,name,coordinateX,coordinateY,date,height,eyeColor,hairColor,country,locationX,locationY,locationZ,locationName,user);
         tableView.setItems(people);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tableView.setPrefHeight(600);

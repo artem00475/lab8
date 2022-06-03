@@ -71,6 +71,7 @@ public class DBManager {
         double locationY;
         long locationZ;
         String locationName;
+        String user;
         try {
             id = resultSet.getInt("id");
             name = resultSet.getString("name");
@@ -85,7 +86,8 @@ public class DBManager {
             locationY = resultSet.getDouble("locationY");
             locationZ = resultSet.getLong("locationZ");
             locationName = resultSet.getString("locationName");
-            return new Person(id, name, coordinatesX, coordinatesY, date, height, eyeColor, hairColor, nationality, locationX, locationY, locationZ, locationName);
+            user=resultSet.getString("userName");
+            return new Person(id, name, coordinatesX, coordinatesY, date, height, eyeColor, hairColor, nationality, locationX, locationY, locationZ, locationName,user);
         } catch (SQLException e) {
             throw new ConnectionException("Ошибка доступа к БД");
         } catch (ParseException e) {

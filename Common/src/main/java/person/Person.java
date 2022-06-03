@@ -23,6 +23,7 @@ public class Person implements Serializable,Comparable<Person> {
     private Country nationality; //Поле может быть null
     private Location location; //Поле может быть null
     private static final LinkedList<Integer> idArray = new LinkedList<>();
+    private String user=null;
 
 
     /**
@@ -92,6 +93,23 @@ public class Person implements Serializable,Comparable<Person> {
         this.nationality=nationality;
         this.location=new Location(locationX,locationY,locationZ,locationName);
     }
+
+    public Person(int id, String name, Integer coordinatesX, Integer coordinatesY, Date date, Double height, ColorE eyeColor, ColorH hairColor, Country nationality, Integer locationX, Double locationY, Long locationZ, String locationName, String user){
+        this.id  = id;
+        this.name=name;
+        this.coordinates=new Coordinates(coordinatesX,coordinatesY);
+        this.creationDate= date;
+        this.height=height;
+        this.eyeColor=eyeColor;
+        this.hairColor=hairColor;
+        this.nationality=nationality;
+        this.location=new Location(locationX,locationY,locationZ,locationName);
+        this.user=user;
+    }
+
+
+
+    public String getUser() {return user;}
 
     /**
      * Возвращает id еловека

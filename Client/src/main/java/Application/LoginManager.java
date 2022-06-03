@@ -7,18 +7,18 @@ import javafx.scene.control.Alert;
 public class LoginManager {
     private String userName;
     private String password;
-    private final Alert alert;
+    private Alert alert;
     private final ClientManager clientManager;
     private final CommandsManager commandsManager;
 
     public LoginManager (ClientManager clientManager, CommandsManager commandsManager) {
-        alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText(null);
         this.clientManager=clientManager;
         this.commandsManager=commandsManager;
     }
 
     public boolean signUp (String userName, String password) {
+        alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
         alert.setTitle("Регистрация");
         try {
             if (!clientManager.signUp(userName, password)) {
@@ -38,6 +38,8 @@ public class LoginManager {
     }
 
     public boolean signIn(String userName, String password) {
+        alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
         alert.setTitle("Вход");
         try {
             if (!clientManager.signIn(userName,password)) {

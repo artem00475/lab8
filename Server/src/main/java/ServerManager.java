@@ -106,17 +106,18 @@ public class ServerManager {
                                             RecievedMessage recievedMessage = recievedMessages.remove(0);
                                             Request request = recievedMessage.getRequest();
                                             if (recievedMessage.getRequest().getCommand() == null) {
-                                                LOG.info("Получен запрос на авторизацию от клиента " + request.getLogin());
                                                 short checkedUser = dbManager.checkUser(request.getLogin(), request.getPassword(),request.isRegister());
                                                 if (checkedUser == 1) {
                                                     if (request.getExit()==0) {
                                                         boolean exist = collectionSender.checkClient(request.getLogin());
                                                         if (!exist) {
+                                                            LOG.info("Получен запрос на авторизацию от клиента " + request.getLogin());
                                                             LOG.info("Клиент авторизован");
                                                             collectionSender.addClient(new ClientInfo(request.getLogin(), recievedMessage.getInetAddress(), recievedMessage.getPort()));
                                                             sendManager.sendAnswer(new Answer("Авторизация " + request.getLogin() + " выполнена", false), recievedMessage.getInetAddress(), recievedMessage.getPort());
                                                             collectionSender.sendCollection(collectionManager.getCollection());
                                                         }else {
+                                                            LOG.info("Получен запрос на авторизацию от клиента " + request.getLogin());
                                                             LOG.info("Клиент "+request.getLogin()+" уже авторизован");
                                                             sendManager.sendAnswer(new Answer("Авторизация " + request.getLogin() + " уже выполнена", true), recievedMessage.getInetAddress(), recievedMessage.getPort());
                                                         }
@@ -125,12 +126,15 @@ public class ServerManager {
                                                         collectionSender.removeClient(request.getLogin());
                                                     }
                                                 } else if (checkedUser == 0) {
-                                                    LOG.info("Клиент зарегистрирован");
+                                                    LOG.info("Получен запрос на регистрацию");
+                                                    LOG.info("Клиент "+request.getLogin()+" зарегистрирован");
                                                     sendManager.sendAnswer(new Answer("Регистрация " + request.getLogin() + " выполнена", false), recievedMessage.getInetAddress(), recievedMessage.getPort());
                                                 } else if (checkedUser == 5 || checkedUser == -1) {
+                                                    LOG.info("Получен запрос на авторизацию от клиента " + request.getLogin());
                                                     LOG.info("Клиент не авторизован");
                                                     sendManager.sendAnswer(new Answer("Авторизация " + request.getLogin() + " не выполнена", true), recievedMessage.getInetAddress(), recievedMessage.getPort());
                                                 }else if (checkedUser == 2) {
+                                                    LOG.info("Получен запрос на регистрацию");
                                                     LOG.info("Клиент не зарегистрирован");
                                                     sendManager.sendAnswer(new Answer("Регистрация " + request.getLogin() + " не выполнена", true), recievedMessage.getInetAddress(), recievedMessage.getPort());
                                                 }
