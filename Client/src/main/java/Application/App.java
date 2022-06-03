@@ -40,6 +40,8 @@ public class App extends Application {
     private final Button removeGreaterCommand = new Button("Удалить большие");
     private final Button removeHeadCommand = new Button("Удалить первый");
     private final Button updateCommand = new Button("Обновить");
+    private final Button update = new Button();
+    private final Button remove = new Button();
     private TextField user;
     private PasswordField passwordField;
     private LoginManager loginManager;
@@ -49,9 +51,15 @@ public class App extends Application {
     private static ObservableList<Person> people;
     private AnchorPane map;
     private SimpleStringProperty table = new SimpleStringProperty("Таблица");
+    private String login;
+
 
     public static void setRequestManagers(RecieveManager recieveManager, SendManager sendManager, TableManager tableManager) {
         clientManager = new ClientManager(sendManager,recieveManager,tableManager);
+    }
+
+    public static Person getPerson(int id) {
+        return people.stream().filter(person -> person.getID()==id).findFirst().orElse(null);
     }
 
 
@@ -73,6 +81,8 @@ public class App extends Application {
         removeGreaterCommand.textProperty().bind(Languages.getString("removeGreaterCommand"));
         removeHeadCommand.textProperty().bind(Languages.getString("removeHeadCommand"));
         updateCommand.textProperty().bind(Languages.getString("updateCommand"));
+        update.textProperty().bind(Languages.getString("update"));
+        remove.textProperty().bind(Languages.getString("remove"));
 
         map = new AnchorPane();
         MapManager.setCircles(map);
@@ -110,6 +120,35 @@ public class App extends Application {
                 }
             }catch (ConnectionException ignored) {}
         });
+        update.setOnAction(event -> {
+            if (!tableView.getSelectionModel().isEmpty()) {
+                Person person =tableView.getSelectionModel().getSelectedItem();
+                if (person.getUser().equals(login)) {
+                    commandsManager.update(person);
+                }else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText(null);
+                    alert.setTitle(Languages.getString("update").get());
+                    alert.setContentText(Languages.getString("personError").get());
+                    alert.showAndWait();
+                }
+            }
+        });
+
+        remove.setOnAction(event -> {
+            if (!tableView.getSelectionModel().isEmpty()) {
+                Person person =tableView.getSelectionModel().getSelectedItem();
+                if (person.getUser().equals(login)) {
+                    commandsManager.remove(person);
+                }else {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setHeaderText(null);
+                    alert.setTitle(Languages.getString("remove").get());
+                    alert.setContentText(Languages.getString("personError").get());
+                    alert.showAndWait();
+                }
+            }
+        });
         helpCommand.setTooltip(new Tooltip("Click the button\nto see commands help"));
         helpCommand.setOnAction(event -> commandsManager.help());
         infoCommand.setTooltip(new Tooltip("Click the button\nto see info about collection"));
@@ -141,6 +180,7 @@ public class App extends Application {
 
 
     }
+
 
     public static void run(String[] args, ObservableList<Person> people) {
         App.people=people;
@@ -174,12 +214,14 @@ public class App extends Application {
     }
 
     public Scene setMainWindowScene(String userName) throws ParseException {
+        login=userName;
         StackPane mainWindow = new StackPane();
         Label userN = new Label(userName);
         TabPane tabPane = new TabPane();
         Tab tab =new Tab();
         tab.textProperty().bind(Languages.getString("table"));
         tableView =new TableView<>();
+        MapManager.setTable(tableView);
         TableColumn<Person,Integer> id = new TableColumn<>("Id");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Person,String> name = new TableColumn<>("Name");
@@ -225,11 +267,10 @@ public class App extends Application {
             if (languageField.getValue().equals("Русский")) {
                 Languages.setResources(ResourceBundle.getBundle("resources",new Locale("ru","RU")));
             }else if (languageField.getValue().equals("Dutch")) {
-                Languages.setResources(ResourceBundle.getBundle("resources", new Locale("en", "US")));
-            }
-//            }else if (languageField.getValue().equals("Lietuvių")){
-//                Languages.setBundle(new Locale("lt","LT"));
-//            }else Languages.setBundle(new Locale("es","ES"));
+                Languages.setResources(ResourceBundle.getBundle("resources", new Locale("nl", "NL")));
+            }else if (languageField.getValue().equals("Lietuvių")){
+                Languages.setResources(ResourceBundle.getBundle("resources",new Locale("LT","LT")));
+            }else Languages.setResources(ResourceBundle.getBundle("resources",new Locale("es","CO")));
         });
         languageField.setValue("Русский");
         mainWindow.getChildren().addAll(tabPane,userN,languageField);
@@ -239,7 +280,7 @@ public class App extends Application {
         VBox vBox1 = new VBox();
         vBox1.getChildren().add(mainWindow);
         FlowPane flowPane = new FlowPane();
-        flowPane.getChildren().addAll(helpCommand,addCommand,addIfMaxCommand,clearCommand,countCommand,scriptCommand,filterCommand,infoCommand,printCommand,removeByIdCommand,removeGreaterCommand,removeHeadCommand,updateCommand);
+        flowPane.getChildren().addAll(update,remove,helpCommand,addCommand,addIfMaxCommand,clearCommand,countCommand,scriptCommand,filterCommand,infoCommand,printCommand,removeByIdCommand,removeGreaterCommand,removeHeadCommand,updateCommand);
         vBox1.getChildren().add(flowPane);
         VBox.setMargin(flowPane,new Insets(15.0,50,10,50));
         flowPane.setAlignment(Pos.CENTER);

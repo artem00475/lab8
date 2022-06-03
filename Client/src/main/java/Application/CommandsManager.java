@@ -44,6 +44,24 @@ public class CommandsManager {
         }
     }
 
+    public void update(Person person1) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
+        try {
+            alert.setTitle(Languages.getString("update").get());
+            person=personCreatorController.updatePerson(person1);
+            if (person!=null) {
+                alert.setContentText(clientManager.consoleMode(new Request(new UpdateCommand(), person1.getID(),person, login, password)).getString());
+                alert.showAndWait();
+                person=null;
+            }
+        }catch (ConnectionException e) {
+            alert.setContentText(Languages.getString("connection").get());
+            alert.showAndWait();
+            throw new ConnectionException("");
+        }catch (NumberFormatException ignored){}
+    }
+
     public void info() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
@@ -108,6 +126,20 @@ public class CommandsManager {
         }
     }
 
+    public void remove(Person person) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
+        try {
+            alert.setTitle(Languages.getString("remove").get());
+            alert.setContentText(clientManager.consoleMode(new Request(new RemoveByIdCommand(),person.getID(),login,password)).getString());
+            alert.showAndWait();
+        }catch (ConnectionException e) {
+            alert.setContentText(Languages.getString("connection").get());
+            alert.showAndWait();
+            throw new ConnectionException("");
+        }catch (NumberFormatException ignored){}
+    }
+
     public void removeById() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
@@ -129,11 +161,20 @@ public class CommandsManager {
         try {
             alert.setTitle(Languages.getString("updateCommand").get());
             id = personCreatorController.getId();
-            person=personCreatorController.getPerson();
-            if (person!=null) {
-                alert.setContentText(clientManager.consoleMode(new Request(new UpdateCommand(), id,person, login, password)).getString());
+            Person person1 = App.getPerson(id);
+            if (person1==null) {
+                alert.setContentText(Languages.getString("idNotExist").get());
                 alert.showAndWait();
-                person=null;
+            }else if (person1.getUser().equals(login)) {
+                person = personCreatorController.updatePerson(person1);
+                if (person != null) {
+                    alert.setContentText(clientManager.consoleMode(new Request(new UpdateCommand(), id, person, login, password)).getString());
+                    alert.showAndWait();
+                    person = null;
+                }
+            }else {
+                alert.setContentText(Languages.getString("personError").get());
+                alert.showAndWait();
             }
         }catch (ConnectionException e) {
             alert.setContentText(Languages.getString("connection").get());

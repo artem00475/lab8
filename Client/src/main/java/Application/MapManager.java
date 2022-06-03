@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -27,6 +28,7 @@ public class MapManager {
     private static final Random random = new Random();
     private static Map<Integer, Shape> shapeMap = new HashMap<>();
     private static Map<Integer, Text> textMap = new HashMap<>();
+    private static TableView<Person> table;
 
     public static void setCircles(AnchorPane group){MapManager.group=group;}
 
@@ -38,6 +40,10 @@ public class MapManager {
                 return color;
             }
         }
+    }
+
+    public static void setTable(TableView<Person> table) {
+        MapManager.table=table;
     }
 
     public static void drawPersons(BlockingQueue<Person> people) {
@@ -120,6 +126,8 @@ public class MapManager {
                     vBox.setAlignment(Pos.CENTER);
                     stage.setScene(new Scene(vBox));
                     stage.show();
+
+                    table.getSelectionModel().select(person);
                 });
                 shapeMap.put(person.getID(),circle);
                 textMap.put(person.getID(),text);
