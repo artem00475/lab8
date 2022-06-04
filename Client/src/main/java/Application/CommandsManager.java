@@ -6,12 +6,16 @@ import Messages.Answer;
 import Messages.Request;
 import commands.*;
 import exceptions.ConnectionException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import person.ColorE;
 import person.Location;
 import person.Person;
 
 import java.io.File;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 public class CommandsManager {
     private final ClientManager clientManager;
@@ -19,6 +23,7 @@ public class CommandsManager {
     private Person person;
     private String login;
     private String password;
+    private ObservableList<Person> removedPeople = FXCollections.observableArrayList();
 
     public CommandsManager(ClientManager clientManager, PersonCreatorController personCreatorController) {
         this.clientManager=clientManager;
@@ -229,21 +234,35 @@ public class CommandsManager {
         }
     }
 
-    public void filterEyeColor() {
+    public void filterEyeColor(ObservableList<Person> people) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);
         ColorE colorE = personCreatorController.getEyeColor();
         if (colorE!=null) {
             try {
                 alert.setTitle(Languages.getString("filterCommand").get());
-                alert.setContentText(clientManager.consoleMode(new Request(new FilterLessThanEyeColorCommand(), colorE, login, password)).getString());
-                alert.showAndWait();
+                ObservableList<Person> personObservableList = people.filtered(person1 -> person1.getEyeColor().ordinal()>=colorE.ordinal());
+                removedPeople.addAll(personObservableList);
+                people.removeAll(personObservableList);
+                BlockingQueue<Person> people1 = new PriorityBlockingQueue<>();
+                people1.addAll(removedPeople);
+                MapManager.removeCircle(people1);
+                //alert.setContentText(clientManager.consoleMode(new Request(new FilterLessThanEyeColorCommand(), colorE, login, password)).getString());
+                //alert.showAndWait();
             } catch (ConnectionException e) {
                 alert.setContentText(Languages.getString("connection").get());
                 alert.showAndWait();
                 throw new ConnectionException("");
             }
         }
+    }
+
+    public void resetPeople(ObservableList<Person> people) {
+        people.addAll(removedPeople);
+        BlockingQueue<Person> people1 = new PriorityBlockingQueue<>();
+        people1.addAll(removedPeople);
+        MapManager.drawPersons(people1);
+        removedPeople.clear();
     }
 
     public void countLocation() {

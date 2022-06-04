@@ -42,6 +42,7 @@ public class App extends Application {
     private final Button updateCommand = new Button("Обновить");
     private final Button update = new Button();
     private final Button remove = new Button();
+    private final Button reset = new Button();
     private TextField user;
     private PasswordField passwordField;
     private LoginManager loginManager;
@@ -83,6 +84,7 @@ public class App extends Application {
         updateCommand.textProperty().bind(Languages.getString("updateCommand"));
         update.textProperty().bind(Languages.getString("update"));
         remove.textProperty().bind(Languages.getString("remove"));
+        reset.textProperty().bind(Languages.getString("reset"));
 
         map = new AnchorPane();
         MapManager.setCircles(map);
@@ -90,6 +92,7 @@ public class App extends Application {
         Stage stage =new Stage();
         PersonCreatorController personCreatorController = new PersonCreatorController(stage);
         commandsManager=new CommandsManager(clientManager, personCreatorController);
+        TableManager.setCommandsManager(commandsManager);
         loginManager = new LoginManager(clientManager,commandsManager);
         primaryStage.setTitle("Авторизация");
         primaryStage.setScene(setLoginWindowScene());
@@ -122,6 +125,7 @@ public class App extends Application {
             }catch (ConnectionException ignored) {}
         });
         update.setOnAction(event -> {
+            commandsManager.resetPeople(people);
             if (!tableView.getSelectionModel().isEmpty()) {
                 Person person =tableView.getSelectionModel().getSelectedItem();
                 if (person.getUser().equals(login)) {
@@ -137,6 +141,7 @@ public class App extends Application {
         });
 
         remove.setOnAction(event -> {
+            commandsManager.resetPeople(people);
             if (!tableView.getSelectionModel().isEmpty()) {
                 Person person =tableView.getSelectionModel().getSelectedItem();
                 if (person.getUser().equals(login)) {
@@ -151,31 +156,70 @@ public class App extends Application {
             }
         });
         helpCommand.setTooltip(new Tooltip("Click the button\nto see commands help"));
-        helpCommand.setOnAction(event -> commandsManager.help());
+        helpCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.help();
+        });
         infoCommand.setTooltip(new Tooltip("Click the button\nto see info about collection"));
-        infoCommand.setOnAction(event -> commandsManager.info());
+        infoCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.info();
+        });
         printCommand.setTooltip(new Tooltip("Click the button\nto print fields ascending Location"));
-        printCommand.setOnAction(event -> commandsManager.print());
+        printCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.print();
+        });
         addCommand.setTooltip(new Tooltip("Click the button\nto add element"));
-        addCommand.setOnAction(event -> {commandsManager.add();});
+        addCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.add();});
         addIfMaxCommand.setTooltip(new Tooltip("Click the button\nto add element that is more then max"));
-        addIfMaxCommand.setOnAction(event -> commandsManager.addIfMax());
+        addIfMaxCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.addIfMax();
+        });
         removeByIdCommand.setTooltip(new Tooltip("Click the button\nto remove element by id"));
-        removeByIdCommand.setOnAction(event -> commandsManager.removeById());
+        removeByIdCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.removeById();
+        });
         updateCommand.setTooltip(new Tooltip("Click the button\nto update element by id"));
-        updateCommand.setOnAction(event -> commandsManager.updateById());
+        updateCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.updateById();
+        });
         removeHeadCommand.setTooltip(new Tooltip("Click the button\nto remove first element"));
-        removeHeadCommand.setOnAction(event -> commandsManager.removeHead());
+        removeHeadCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.removeHead();
+        });
         removeGreaterCommand.setTooltip(new Tooltip("Click the button\nto remove elements that greater than it"));
-        removeGreaterCommand.setOnAction(event -> commandsManager.removeGreater());
+        removeGreaterCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.removeGreater();
+        });
         clearCommand.setTooltip(new Tooltip("Click the button\nto clear collection"));
-        clearCommand.setOnAction(event -> commandsManager.clear());
+        clearCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.clear();
+        });
         filterCommand.setTooltip(new Tooltip("Click the button\nto filter less than EyeColor"));
-        filterCommand.setOnAction(event -> commandsManager.filterEyeColor());
+        filterCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.filterEyeColor(people);
+        });
         countCommand.setTooltip(new Tooltip("Click the button\nto count elements with greater Location"));
-        countCommand.setOnAction(event -> commandsManager.countLocation());
+        countCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.countLocation();
+        });
         scriptCommand.setTooltip(new Tooltip("Click the button\nto execute script from file"));
-        scriptCommand.setOnAction(event -> commandsManager.script());
+        scriptCommand.setOnAction(event -> {
+            commandsManager.resetPeople(people);
+            commandsManager.script();
+        });
+        reset.setOnAction(event -> commandsManager.resetPeople(people));
 
 
 
@@ -189,6 +233,7 @@ public class App extends Application {
     }
 
     public static void exit() {clientManager.exit();}
+
 
     public Scene setLoginWindowScene() {
         user = new TextField();
@@ -299,7 +344,7 @@ public class App extends Application {
         VBox vBox1 = new VBox();
         vBox1.getChildren().add(mainWindow);
         FlowPane flowPane = new FlowPane();
-        flowPane.getChildren().addAll(update,remove,helpCommand,addCommand,addIfMaxCommand,clearCommand,countCommand,scriptCommand,filterCommand,infoCommand,printCommand,removeByIdCommand,removeGreaterCommand,removeHeadCommand,updateCommand);
+        flowPane.getChildren().addAll(update,remove,reset,helpCommand,addCommand,addIfMaxCommand,clearCommand,countCommand,scriptCommand,filterCommand,infoCommand,printCommand,removeByIdCommand,removeGreaterCommand,removeHeadCommand,updateCommand);
         vBox1.getChildren().add(flowPane);
         VBox.setMargin(flowPane,new Insets(15.0,50,10,50));
         flowPane.setAlignment(Pos.CENTER);

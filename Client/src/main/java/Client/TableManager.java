@@ -1,5 +1,6 @@
 package Client;
 
+import Application.CommandsManager;
 import Application.MapManager;
 import Messages.CollectionInfo;
 import Messages.Request;
@@ -23,6 +24,9 @@ public class TableManager {
     private ObservableList<Person> people;
     private Thread thread;
     private SimpleBooleanProperty work;
+    private static CommandsManager commandsManager;
+
+    public static void setCommandsManager(CommandsManager commandsManager) {TableManager.commandsManager=commandsManager;}
 
     public TableManager(SimpleBooleanProperty simpleBooleanProperty, ObservableList<Person> people) {
         try {
@@ -52,21 +56,33 @@ public class TableManager {
             try {
                 CollectionInfo collectionInfo = (CollectionInfo) recieve();
                 if (collectionInfo.getStatusInfo() == StatusInfo.ADD) {
-                    people.addAll(collectionInfo.getCollection());
-                    Platform.runLater(() -> MapManager.drawPersons(collectionInfo.getCollection()));
+
+                    Platform.runLater(() -> {
+                        TableManager.commandsManager.resetPeople(people);
+                        people.addAll(collectionInfo.getCollection());
+                        MapManager.drawPersons(collectionInfo.getCollection());
+                    });
                 } else if (collectionInfo.getStatusInfo() == StatusInfo.REMOVE) {
-                    Platform.runLater(() -> MapManager.removeCircle(collectionInfo.getCollection()));
-                    collectionInfo.getCollection().stream().forEach(person -> people.stream().forEach(person1 -> {
-                        if (person.getID() == person1.getID()) people.remove(person1);
-                    }));
+                    Platform.runLater(() -> {
+                        TableManager.commandsManager.resetPeople(people);
+                        MapManager.removeCircle(collectionInfo.getCollection());
+                        collectionInfo.getCollection().stream().forEach(person -> people.stream().forEach(person1 -> {
+                            if (person.getID() == person1.getID()) people.remove(person1);
+                        }));
+                    });
+
                 } else {
-                    Platform.runLater(() -> MapManager.updateCircle(collectionInfo.getCollection()));
-                    collectionInfo.getCollection().stream().forEach(person -> people.stream().forEach(person1 -> {
-                        if (person.getID()==person1.getID()) {
-                            people.remove(person1);
-                            people.add(person);
-                        }
-                    }));
+                    Platform.runLater(() -> {
+                        TableManager.commandsManager.resetPeople(people);
+                        MapManager.updateCircle(collectionInfo.getCollection());
+                        collectionInfo.getCollection().stream().forEach(person -> people.stream().forEach(person1 -> {
+                            if (person.getID()==person1.getID()) {
+                                people.remove(person1);
+                                people.add(person);
+                            }
+                        }));
+                    });
+
                 }
             } catch (AsynchronousCloseException ignored) {
             }catch (ConcurrentModificationException ignored){
