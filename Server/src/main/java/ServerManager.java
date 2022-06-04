@@ -116,7 +116,7 @@ public class ServerManager {
                                                             LOG.info("Клиент авторизован");
                                                             collectionSender.addClient(new ClientInfo(request.getLogin(), recievedMessage.getInetAddress(), recievedMessage.getPort()));
                                                             sendManager.sendAnswer(new Answer("Авторизация " + request.getLogin() + " выполнена", false), recievedMessage.getInetAddress(), recievedMessage.getPort());
-                                                            collectionSender.sendCollection(collectionManager.getCollection(), StatusInfo.ADD);
+                                                            collectionSender.sendCollectionToClient(collectionManager.getCollection(), StatusInfo.ADD,request.getLogin());
                                                         }else {
                                                             LOG.info("Получен запрос на авторизацию от клиента " + request.getLogin());
                                                             LOG.info("Клиент "+request.getLogin()+" уже авторизован");

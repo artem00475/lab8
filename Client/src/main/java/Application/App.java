@@ -86,6 +86,7 @@ public class App extends Application {
 
         map = new AnchorPane();
         MapManager.setCircles(map);
+        MapManager.setPeople(people);
         Stage stage =new Stage();
         PersonCreatorController personCreatorController = new PersonCreatorController(stage);
         commandsManager=new CommandsManager(clientManager, personCreatorController);
@@ -124,7 +125,7 @@ public class App extends Application {
             if (!tableView.getSelectionModel().isEmpty()) {
                 Person person =tableView.getSelectionModel().getSelectedItem();
                 if (person.getUser().equals(login)) {
-                    commandsManager.update(person);
+                    commandsManager.update(App.getPerson(person.getID()));
                 }else {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setHeaderText(null);

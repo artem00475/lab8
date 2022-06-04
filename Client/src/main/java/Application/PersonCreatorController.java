@@ -136,7 +136,7 @@ public class PersonCreatorController {
         Label locationName = new Label("LocationName");
         TextField nameField = new TextField(person1.getName());
         TextField coordinateXField = new TextField(String.valueOf(person1.getCoordinateX()));
-        TextField coordinateYField = new TextField(String.valueOf(person1.getCoordinateX()));
+        TextField coordinateYField = new TextField(String.valueOf(person1.getCoordinateY()));
         TextField heightField = new TextField(String.valueOf(person1.getHeight()));
         ObservableList<String> eye = FXCollections.observableArrayList("GREEN", "RED", "YELLOW", "BROWN");
         ComboBox<String> eyeColorField = new ComboBox<>(eye);

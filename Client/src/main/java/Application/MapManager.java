@@ -1,6 +1,7 @@
 package Application;
 
 import javafx.animation.*;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -29,8 +30,25 @@ public class MapManager {
     private static Map<Integer, Shape> shapeMap = new HashMap<>();
     private static Map<Integer, Text> textMap = new HashMap<>();
     private static TableView<Person> table;
+    private static Label id = new Label();
+    private static Label name = new Label();
+    private static Label coordinateX = new Label();
+    private static Label coordinateY = new Label();
+    private static Label date = new Label();
+    private static Label height = new Label();
+    private static Label eye = new Label();
+    private static Label hair = new Label();
+    private static Label country = new Label();
+    private static Label locationX = new Label();
+    private static Label locationY = new Label();
+    private static Label locationZ = new Label();
+    private static Label locationName = new Label();
+    private static Label user = new Label();
+    private static ObservableList<Person> people;
 
     public static void setCircles(AnchorPane group){MapManager.group=group;}
+
+    public static void setPeople(ObservableList<Person> people) {MapManager.people=people;}
 
     public static Color getColor() {
         Color color;
@@ -108,20 +126,7 @@ public class MapManager {
                 circle.setOnMouseClicked(event -> {
                     Stage stage = new Stage();
                     VBox vBox = new VBox();
-                    Label id = new Label("Id: " + person.getID());
-                    Label name = new Label("Name: " + person.getName());
-                    Label coordinateX = new Label("CoordinateX: " + person.getCoordinateX());
-                    Label coordinateY = new Label("CoordinateY: " + person.getCoordinateY());
-                    Label date = new Label("Date: " + person.getDate());
-                    Label height = new Label("Height: " + person.getHeight());
-                    Label eye = new Label("EyeColor: " + person.getEyeColor().name());
-                    Label hair = new Label("HairColor: " + person.getHairColor().name());
-                    Label country = new Label("Country: " + person.getNationality().name());
-                    Label locationX = new Label("LocationX: " + person.getLocationX());
-                    Label locationY = new Label("LocationY: " + person.getLocationY());
-                    Label locationZ = new Label("LocationZ: " + person.getLocationZ());
-                    Label locationName = new Label("LocationName: " + person.getLocationName());
-                    Label user = new Label("User: " + person.getUser());
+                    updateLabels(person.getID());
                     vBox.getChildren().addAll(id, name, coordinateX, coordinateY, date, height, eye, hair, country, locationX, locationY, locationZ, locationName,user);
                     vBox.setAlignment(Pos.CENTER);
                     stage.setScene(new Scene(vBox));
@@ -141,6 +146,27 @@ public class MapManager {
                 group.getChildren().remove(shapeMap.get(person.getID()));
                 group.getChildren().remove(textMap.get(person.getID()));
             }
+    }
+
+    public static void updateLabels(int id1) {
+        for (Person person : people) {
+            if (person.getID()==id1) {
+                id.setText("Id: " + person.getID());
+                name.setText("Name: " + person.getName());
+                coordinateX.setText("CoordinateX: " + person.getCoordinateX());
+                coordinateY.setText("CoordinateY: " + person.getCoordinateY());
+                date.setText("Date: " + person.getDate());
+                height.setText("Height: " + person.getHeight());
+                eye.setText("EyeColor: " + person.getEyeColor().name());
+                hair.setText("HairColor: " + person.getHairColor().name());
+                country.setText("Country: " + person.getNationality().name());
+                locationX.setText("LocationX: " + person.getLocationX());
+                locationY.setText("LocationY: " + person.getLocationY());
+                locationZ.setText("LocationZ: " + person.getLocationZ());
+                locationName.setText("LocationName: " + person.getLocationName());
+                user.setText("User: " + person.getUser());
+            }
+        }
     }
 
     public static void updateCircle(BlockingQueue<Person> people) {

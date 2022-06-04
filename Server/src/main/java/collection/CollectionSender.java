@@ -55,6 +55,20 @@ public class CollectionSender {
         }
     }
 
+    public void sendCollectionToClient(BlockingQueue<Person> people, StatusInfo statusInfo, String login) {
+        try {
+            for (ClientInfo clientInfo : clientInfos) {
+                if (clientInfo.getLogin().equals(login)) {
+                    byte[] buffer = serialize(new CollectionInfo(people, statusInfo));
+                    DatagramPacket output = new DatagramPacket(buffer, buffer.length, clientInfo.getInetAddress(), clientInfo.getPort());
+                    datagramSocket.send(output);
+                }
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
     public byte[] serialize(Object obj) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream os = new ObjectOutputStream(out);
