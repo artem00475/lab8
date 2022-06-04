@@ -4,14 +4,18 @@ import javafx.animation.*;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Box;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
@@ -129,6 +133,10 @@ public class MapManager {
                     updateLabels(person.getID());
                     vBox.getChildren().addAll(id, name, coordinateX, coordinateY, date, height, eye, hair, country, locationX, locationY, locationZ, locationName,user);
                     vBox.setAlignment(Pos.CENTER);
+                    vBox.setSpacing(3);
+                    VBox.setMargin(id,new Insets(10,0,0,0));
+                    VBox.setMargin(user, new Insets(0,0,10,0));
+
                     stage.setScene(new Scene(vBox));
                     stage.show();
 
