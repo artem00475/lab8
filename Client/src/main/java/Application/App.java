@@ -315,7 +315,7 @@ public class App extends Application {
         tab1.textProperty().bind(Languages.getString("map"));
         tab1.setContent(map);
         tabPane.getTabs().addAll(tab,tab1);
-        ObservableList<String> language = FXCollections.observableArrayList("Русский", "Dutch", "Lietuvių", "Español");
+        ObservableList<String> language = FXCollections.observableArrayList("Русский", "Dutch", "Латвийский", "Español");
         ComboBox<String> languageField = new ComboBox<>(language);
         languageField.setOnAction(event -> {
             if (languageField.getValue().equals("Русский")) {
@@ -326,7 +326,7 @@ public class App extends Application {
                 Languages.setResources(ResourceBundle.getBundle("resources", new Locale("nl", "NL")));
                 Person.setPattern("HH:mm:ss dd-MM-yyyy");
                 people.add(null);
-            }else if (languageField.getValue().equals("Lietuvių")){
+            }else if (languageField.getValue().equals("Латвийский")){
                 Languages.setResources(ResourceBundle.getBundle("resources",new Locale("LT","LT")));
                 Person.setPattern("HH:mm:ss dd.MM.yyyy");
                 people.add(null);
